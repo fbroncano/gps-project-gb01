@@ -30,7 +30,7 @@
     <fragment
         android:id="@+id/settingsFragment"
         android:name="es.unex.gps.weathevent.view.SettingsFragment"
-        android:label="SettingsFragment" />
+        android:label="Ajustes" />
 
     <action
         android:id="@+id/action_global_settingsFragment"
