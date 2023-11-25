@@ -10,7 +10,7 @@ import es.unex.gps.weathevent.model.User
 import es.unex.gps.weathevent.model.UserCiudadCrossRef
 
 
-
 abstract class WeathEventDataBase : RoomDatabase() {
+    abstract fun userDao(): UserDao
 
 }
