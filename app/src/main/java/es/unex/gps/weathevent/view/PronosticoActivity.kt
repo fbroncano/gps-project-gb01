@@ -11,9 +11,6 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupWithNavController
-import es.unex.gps.weathevent.Model.User
-import es.unex.gps.weathevent.model.Ciudad
-import es.unex.gps.weathevent.model.User
 import es.unex.gps.weathevent.R
 import es.unex.gps.weathevent.api.APIHelpers
 import es.unex.gps.weathevent.api.getElTiempoService
