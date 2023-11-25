@@ -8,6 +8,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import es.unex.gps.weathevent.adapter.FavoritosAdapter
 import es.unex.gps.weathevent.database.WeathEventDataBase
 import es.unex.gps.weathevent.databinding.FragmentFavoritosBinding
 import es.unex.gps.weathevent.interfaces.OnCiudadClickListener
