@@ -9,6 +9,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import es.unex.gps.weathevent.adapter.ProximosDiasAdapter
 import es.unex.gps.weathevent.api.APIError
 import es.unex.gps.weathevent.api.APIHelpers
 import es.unex.gps.weathevent.api.getElTiempoService
@@ -17,6 +18,8 @@ import es.unex.gps.weathevent.data.api.ProximosDiasSingle
 import es.unex.gps.weathevent.databinding.FragmentProximosDiasBinding
 import es.unex.gps.weathevent.interfaces.CiudadParam
 import es.unex.gps.weathevent.model.Ciudad
+import es.unex.gps.weathevent.model.Fecha
+import es.unex.gps.weathevent.model.ProximosDiasTiempo
 import kotlinx.coroutines.launch
 
 private const val ARG_PARAM1 = "param1"
@@ -88,26 +91,30 @@ class ProximosDiasFragment : Fragment() {
                             val dates = obj.attributes?.fecha?.split("-")
                             val fecha = Fecha(dates?.get(2)?.toInt()!!, dates?.get(1)?.toInt()!!, dates?.get(0)?.toInt()!!, 0, 0)
 
-                            _dias.add(ProximosDiasTiempo(
+                            _dias.add(
+                                ProximosDiasTiempo(
                                 fecha.getFormatDay(),
                                 "${APIHelpers.convertTempToPreferences(obj.temperatura?.minima?.toLong()!!, requireContext())}\n${APIHelpers.convertTempToPreferences(obj.temperatura?.maxima?.toLong()!!, requireContext())}",
                                 obj.estadoCieloDescripcion?.get(0)!!,
                                 "Sens. ter.: ${APIHelpers.convertTempToPreferences(obj.sensTermica?.minima?.toLong()!!, requireContext())} - ${APIHelpers.convertTempToPreferences(obj.sensTermica?.maxima?.toLong()!!, requireContext())}",
                                 "Precipitacion: ${obj.probPrecipitacion?.get(0)!!}%",
                                 "Viento: ${APIHelpers.convertVelToPreferences(obj.viento?.get(0)?.velocidad?.toLong()!!, requireContext())} ${obj.viento?.get(0)?.direccion}"
-                                ))
+                                )
+                            )
                         } else if (obj is ProximosDiasSingle) {
                             val dates = obj.attributes?.fecha?.split("-")
                             val fecha = Fecha(dates?.get(2)?.toInt()!!, dates?.get(1)?.toInt()!!, dates?.get(0)?.toInt()!!, 0, 0)
 
-                            _dias.add(ProximosDiasTiempo(
+                            _dias.add(
+                                ProximosDiasTiempo(
                                 fecha.getFormatDay(),
                                 "${APIHelpers.convertTempToPreferences(obj.temperatura?.minima?.toLong()!!, requireContext())}\n${APIHelpers.convertTempToPreferences(obj.temperatura?.maxima?.toLong()!!, requireContext())}",
                                 obj.estadoCieloDescripcion!!,
                                 "Sens. ter.: ${APIHelpers.convertTempToPreferences(obj.sensTermica?.minima?.toLong()!!, requireContext())} - ${APIHelpers.convertTempToPreferences(obj.sensTermica?.maxima?.toLong()!!, requireContext())}",
                                 "Precipitacion: ${obj.probPrecipitacion?.get(0)!!}%",
                                 "Viento: ${APIHelpers.convertVelToPreferences(obj.viento?.velocidad?.toLong()!!, requireContext())} ${obj.viento?.direccion}"
-                            ))
+                            )
+                            )
                         }
                     }
 
