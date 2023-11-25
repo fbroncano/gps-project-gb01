@@ -1,4 +1,4 @@
-package es.unex.gps.weathevent
+package es.unex.gps.weathevent.view
 
 import android.os.Build
 import android.os.Bundle
@@ -11,6 +11,7 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupWithNavController
+import es.unex.gps.weathevent.R
 
 import es.unex.gps.weathevent.api.APIHelpers
 import es.unex.gps.weathevent.api.getElTiempoService

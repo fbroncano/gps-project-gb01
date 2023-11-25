@@ -1,4 +1,4 @@
-package es.unex.gps.weathevent
+package es.unex.gps.weathevent.view
 
 import android.os.Bundle
 import androidx.preference.PreferenceFragmentCompat

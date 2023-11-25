@@ -1,4 +1,24 @@
-package es.unex.gps.weathevent
+package es.unex.gps.weathevent.view
+
+import android.os.Build
+import android.os.Bundle
+import android.util.Log
+import android.view.LayoutInflater
+import android.view.View
+import android.widget.Toast
+import androidx.annotation.RequiresApi
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.LinearLayoutManager
+import es.unex.gps.weathevent.api.APIError
+import es.unex.gps.weathevent.api.APIHelpers
+import es.unex.gps.weathevent.api.getElTiempoService
+import es.unex.gps.weathevent.databinding.FragmentProximasHorasBinding
+import es.unex.gps.weathevent.interfaces.CiudadParam
+import es.unex.gps.weathevent.model.Ciudad
+import es.unex.gps.weathevent.model.TiempoPorHora
+import kotlinx.coroutines.launch
+import java.time.LocalDateTime
 
 /**
  * A simple [Fragment] subclass.
