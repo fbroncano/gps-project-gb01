@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:title="Unidades de medida"
+        >
+
+    <ListPreference
+        app:defaultValue="Celsius"
+        app:entries="@array/grados_entries"
+        app:entryValues="@array/grados_entries"
+        app:key="Grados"
+        app:title="Unidades de medida"
+        app:useSimpleSummaryProvider="true"
+        />
+
+    <ListPreference
+        app:defaultValue="Km/h"
+        app:entries="@array/velocidad_entries"
+        app:entryValues="@array/velocidad_entries"
+        app:key="Velocidad"
+        app:title="Unidades de medida"
+        app:useSimpleSummaryProvider="true"
+        />
+    </PreferenceCategory>
+</PreferenceScreen>
