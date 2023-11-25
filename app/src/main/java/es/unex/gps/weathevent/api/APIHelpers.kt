@@ -27,4 +27,15 @@ class APIHelpers {
             return emptyList()
         }
     }
+
+    companion object {
+        fun getCodProv(ciudadId: Long): String {
+            return if (ciudadId < 10000) "0${ciudadId.toString()[0]}"
+            else ciudadId.toString().subSequence(0, 2).toString()
+        }
+
+        fun getCiudadFormat(ciudadId: Long): String {
+            return if (ciudadId < 10000) "0$ciudadId" else ciudadId.toString()
+        }
+    }
 }
