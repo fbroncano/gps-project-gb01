@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     tools:context=".view.ProximasHorasFragment">
 
-
+<!---->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvProximasHoras"
         android:layout_width="match_parent"
