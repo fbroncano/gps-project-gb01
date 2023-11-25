@@ -6,7 +6,6 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
-import es.unex.gps.weathevent.Model.Ciudad
 import es.unex.gps.weathevent.model.Ciudad
 import es.unex.gps.weathevent.model.UserCiudadCrossRef
 import es.unex.gps.weathevent.model.UserWithCiudades
