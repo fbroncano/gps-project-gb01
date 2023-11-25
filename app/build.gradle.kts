@@ -75,35 +75,5 @@ dependencies {
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
-
-<<<<<<< HEAD
-<<<<<<< HEAD
-    val room_version = "2.5.0"
-
-    implementation("androidx.room:room-common:$room_version")
-
-    implementation("androidx.room:room-runtime:$room_version")
-    annotationProcessor("androidx.room:room-compiler:$room_version")
-
-    // To use Kotlin Symbol Processing (KSP)
-    ksp("androidx.room:room-compiler:$room_version")
-
-    // optional - Kotlin Extensions and Coroutines support for Room
-    implementation("androidx.room:room-ktx:$room_version")
-
-    // optional - Test helpers
-    testImplementation("androidx.room:room-testing:$room_version")
-=======
-=======
->>>>>>> 59f9885f43b4c228548ffdd8330c91f433ab2643
-    implementation("com.google.code.gson:gson:2.10.1")
-    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
-    implementation("com.squareup.retrofit2:retrofit:2.9.0")
-    implementation("com.squareup.okhttp3:logging-interceptor:5.0.0-alpha.11")
-    implementation("com.squareup.okhttp3:okhttp:4.9.1")
-    implementation("ru.gildor.coroutines:kotlin-coroutines-okhttp:1.0")
-<<<<<<< HEAD
->>>>>>> 59f9885f43b4c228548ffdd8330c91f433ab2643
-=======
->>>>>>> 59f9885f43b4c228548ffdd8330c91f433ab2643
+    
 }
