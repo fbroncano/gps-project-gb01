@@ -68,7 +68,11 @@ class RegistroActivity : AppCompatActivity() {
         withContext(Dispatchers.IO) {
             db.userDao().insert(user)
         }
-        MainActivity.start(this, user)
+
+        val intent = Intent(this, MainActivity::class.java).apply {
+            putExtra(MainActivity.USER_INFO, user)
+        }
+        startActivity(intent)
     }
 
     private fun todoValido(): Boolean{

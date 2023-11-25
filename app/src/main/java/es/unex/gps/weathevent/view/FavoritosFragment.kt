@@ -1,18 +1,34 @@
 package es.unex.gps.weathevent.view
 
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.Toast
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.LinearLayoutManager
+import es.unex.gps.weathevent.database.WeathEventDataBase
+import es.unex.gps.weathevent.databinding.FragmentFavoritosBinding
+import es.unex.gps.weathevent.interfaces.OnCiudadClickListener
+import es.unex.gps.weathevent.interfaces.UserParam
+import es.unex.gps.weathevent.model.Ciudad
+import es.unex.gps.weathevent.model.User
+import kotlinx.coroutines.launch
+
 /**
  * A simple [Fragment] subclass.
  * Use the [LibraryFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
+private const val ARG_PARAM1 = "param1"
+private const val ARG_PARAM2 = "param2"
+
 class FavoritosFragment : Fragment() {
 
     private lateinit var db: WeathEventDataBase
 
     private lateinit var listener: OnCiudadClickListener
-    interface OnCiudadClickListener {
-        fun onCiudadClick(ciudad: Ciudad)
-    }
 
     private var _binding: FragmentFavoritosBinding? = null
     private val binding get() = _binding!!
@@ -20,7 +36,7 @@ class FavoritosFragment : Fragment() {
 
     private var favCiudades: List<Ciudad> = emptyList()
 
-    private lateinit var userParam: ListEventFragment.UserParamFragment
+    private lateinit var userParam: UserParam
     private lateinit var user: User
 
     // TODO: Rename and change types of parameters
@@ -44,7 +60,7 @@ class FavoritosFragment : Fragment() {
             throw RuntimeException(context.toString() + " must implement OnCiudadClickListener")
         }
 
-        if (context is ListEventFragment.UserParamFragment) {
+        if (context is UserParam) {
             userParam = context
         } else {
             throw RuntimeException(context.toString() + " must implement OnEventClickListener")
