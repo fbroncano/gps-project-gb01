@@ -11,7 +11,7 @@ import es.unex.gps.weathevent.model.UserCiudadCrossRef
 @Database(version = 4, entities = [User::class, Ciudad::class, UserCiudadCrossRef::class], exportSchema = false)
 abstract class WeathEventDataBase : RoomDatabase() {
     abstract fun userDao(): UserDao
-
+    abstract fun eventDao() : EventDao
     abstract fun ciudadDao() : CiudadDao
 
     companion object {
