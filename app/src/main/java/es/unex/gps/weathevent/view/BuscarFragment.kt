@@ -1,5 +1,31 @@
 package es.unex.gps.weathevent.view
 
+import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
+import android.util.Log
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.Toast
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.LinearLayoutManager
+import es.unex.gps.weathevent.api.APIError
+import es.unex.gps.weathevent.api.APIHelpers
+import es.unex.gps.weathevent.database.WeathEventDataBase
+import es.unex.gps.weathevent.databinding.FragmentBuscarBinding
+import es.unex.gps.weathevent.model.Ciudad
+import es.unex.gps.weathevent.model.User
+import kotlinx.coroutines.launch
+
+/**
+ * A simple [Fragment] subclass.
+ * Use the [BuscarFragment.newInstance] factory method to
+ * create an instance of this fragment.
+ */
+private const val ARG_PARAM1 = "param1"
+private const val ARG_PARAM2 = "param2"
 class BuscarFragment : Fragment() {
     // TODO: Rename and change types of parameters
     private var param1: String? = null

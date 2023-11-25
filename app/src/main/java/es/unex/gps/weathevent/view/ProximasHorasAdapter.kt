@@ -1,8 +1,9 @@
-package es.unex.gps.weathevent
+package es.unex.gps.weathevent.view
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import es.unex.gps.weathevent.R
 import es.unex.gps.weathevent.model.TiempoPorHora
 import es.unex.gps.weathevent.databinding.PronosticoItemListBinding
 

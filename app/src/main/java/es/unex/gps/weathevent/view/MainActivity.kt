@@ -1,7 +1,8 @@
-package es.unex.gps.weathevent
+package es.unex.gps.weathevent.view
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import es.unex.gps.weathevent.R
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
