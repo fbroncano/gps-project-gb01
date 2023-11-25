@@ -19,6 +19,8 @@ interface CiudadDao {
     // Insertar localidad en favoritos
     @Insert(onConflict = OnConflictStrategy.REPLACE) //En caso de que se intente guardar una tupla idéntica se reemplaza
     suspend fun insert(ciudad: Ciudad)
+
+    // Borrar localidad de favoritos
     @Delete
     suspend fun delete(ciudad: Ciudad)
     @Transaction
