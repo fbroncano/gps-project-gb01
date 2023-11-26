@@ -12,6 +12,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import es.unex.gps.weathevent.database.WeathEventDataBase
 import es.unex.gps.weathevent.databinding.FragmentListEventBinding
+import es.unex.gps.weathevent.interfaces.OnClickEventListener
+import es.unex.gps.weathevent.interfaces.UserParam
 import es.unex.gps.weathevent.model.Event
 import es.unex.gps.weathevent.model.User
 import kotlinx.coroutines.launch
@@ -30,10 +32,8 @@ class ListEventFragment : Fragment() {
     private val binding get() = _binding!!
     private lateinit var adapter: EventAdapter
 
-    private lateinit var userParam: UserParamFragment
-    interface UserParamFragment {
-        fun getUserFragment() : User
-    }
+    private lateinit var userParam: UserParam
+    private lateinit var listener: OnClickEventListener
 
     private var param1: String? = null
     private var param2: String? = null
@@ -55,7 +55,7 @@ class ListEventFragment : Fragment() {
             throw RuntimeException(context.toString() + " must implement OnEventClickListener")
         }
 
-        if (context is UserParamFragment) {
+        if (context is UserParam) {
             userParam = context
         } else {
             throw RuntimeException(context.toString() + " must implement OnEventClickListener")
@@ -79,6 +79,37 @@ class ListEventFragment : Fragment() {
         }
 
         setUpRecyclerView()
+    }
+
+    private fun setUpRecyclerView() {
+
+        var events : List<Event>
+
+        lifecycleScope.launch {
+            Log.d("userID", userParam.getUserFragment().userId!!.toString())
+            events = WeathEventDataBase.getInstance(requireContext()).eventDao().searchByUser(userParam.getUserFragment().userId!!)
+
+            adapter = EventAdapter(events,
+                onClick = {
+                    listener.onEventClick(it)
+                },
+                onClickDelete = {
+                    listener.onEventDelete(it)
+                    lifecycleScope.launch {
+                        events = WeathEventDataBase.getInstance(requireContext()).eventDao()
+                            .searchByUser(userParam.getUserFragment().userId!!)
+                        (binding.rvListEvents.adapter as EventAdapter).updateData(events)
+                    }
+                }
+            )
+
+            with(binding) {
+                rvListEvents.layoutManager = LinearLayoutManager(context)
+                rvListEvents.adapter = adapter
+            }
+        }
+
+        Log.d("ListEventFragment", "setUpRecyclerView")
     }
 
     override fun onResume() {
