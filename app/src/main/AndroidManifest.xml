@@ -18,6 +18,11 @@
             android:name=".view.PronosticoActivity"
             android:exported="false" />
         <activity
+            android:name=".view.AddEventActivity"
+            android:exported="false"
+            android:label="@string/title_activity_add_event"
+            android:theme="@style/Theme.WeathEvent" />
+        <activity
             android:name=".view.IniciarSesionActivity"
             android:exported="true">
             <intent-filter>
@@ -27,6 +32,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".view.MainActivity" />
+        <activity android:name=".view.EventDetailsActivity" />
         <activity android:name=".view.RegistroActivity" />
         <activity android:name=".view.PerfilActivity" />
     </application>
