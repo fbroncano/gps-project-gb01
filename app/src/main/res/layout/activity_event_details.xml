@@ -57,7 +57,241 @@
         tools:text="Hora - nombre evento"
         />
 
-    
+    <LinearLayout
+        android:id="@+id/first_row"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/event_data_view"
+        android:padding="10sp"
+        android:layout_margin="15sp"
+        >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_weight="@integer/material_motion_duration_long_1"
+            android:padding="10sp"
+            android:background="@drawable/variable_background"
+            android:layout_marginEnd="10sp"
+            >
+
+            <TextView
+                android:id="@+id/precipitacion_title_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAlignment="center"
+                android:textStyle="bold"
+                android:text="@string/precipitacion"
+                tools:text="Variable"
+                />
+
+            <TextView
+                android:id="@+id/precipitacion_value_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAlignment="center"
+                android:textStyle="bold"
+                android:textSize="20sp"
+                tools:text="Valor"
+                />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_weight="@integer/material_motion_duration_long_1"
+            android:padding="10sp"
+            android:background="@drawable/variable_background"
+            android:layout_marginStart="10sp"
+            >
+
+            <TextView
+                android:id="@+id/sensterm_title_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAlignment="center"
+                android:textStyle="bold"
+                android:text="@string/sens_termica"
+                tools:text="Variable"
+                />
+
+            <TextView
+                android:id="@+id/sendterm_value_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAlignment="center"
+                android:textStyle="bold"
+                android:textSize="20sp"
+                tools:text="Valor"
+                />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/second_row"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/first_row"
+        android:padding="10sp"
+        android:layout_margin="15sp"
+        >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:layout_weight="@integer/material_motion_duration_long_1"
+            android:padding="10sp"
+            android:background="@drawable/variable_background"
+            android:layout_marginEnd="10sp"
+            >
+
+            <TextView
+                android:id="@+id/estado_title_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAlignment="center"
+                android:textStyle="bold"
+                android:text="@string/estado_del_cielo"
+                android:ellipsize="end"
+                tools:text="Variable"
+                />
+
+            <TextView
+                android:id="@+id/estado_value_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAlignment="center"
+                android:textStyle="bold"
+                android:textSize="20sp"
+                android:autoSizeTextType="uniform"
+                tools:text="Valor"
+                />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:layout_weight="@integer/material_motion_duration_long_1"
+            android:padding="10sp"
+            android:background="@drawable/variable_background"
+            android:layout_marginStart="10sp"
+            >
+
+            <TextView
+                android:id="@+id/viento_title_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAlignment="center"
+                android:textStyle="bold"
+                android:text="@string/viento"
+                android:ellipsize="end"
+                tools:text="Variable"
+                />
+
+            <TextView
+                android:id="@+id/viento_value_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAlignment="center"
+                android:textStyle="bold"
+                android:textSize="20sp"
+                android:autoSizeTextType="uniform"
+                tools:text="Valor"
+                />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/thrid_row"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/second_row"
+        android:padding="10sp"
+        android:layout_margin="15sp"
+        android:weightSum="2"
+        >
+
+        <LinearLayout
+            android:id="@+id/indiceuv_card"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_weight="1"
+            android:padding="10sp"
+            android:background="@drawable/variable_background"
+            android:layout_marginEnd="10sp"
+            >
+
+            <TextView
+                android:id="@+id/indiceuv_title_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAlignment="center"
+                android:textStyle="bold"
+                android:text="@string/ndice_uv"
+                tools:text="Variable"/>
+
+            <TextView
+                android:id="@+id/indiceuv_value_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAlignment="center"
+                android:textStyle="bold"
+                android:textSize="20sp"
+                tools:text="Valor"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/humedad_card"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_weight="1"
+            android:padding="10sp"
+            android:background="@drawable/variable_background"
+            android:layout_marginStart="10sp"
+            >
+
+            <TextView
+                android:id="@+id/humedad_title_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAlignment="center"
+                android:textStyle="bold"
+                android:text="@string/humedad_relativa"
+                android:ellipsize="end"
+                tools:text="Variable"
+                />
+
+            <TextView
+                android:id="@+id/humedad_value_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAlignment="center"
+                android:textStyle="bold"
+                android:textSize="20sp"
+                android:autoSizeTextType="uniform"
+                tools:text="Valor"
+                />
+
+        </LinearLayout>
+
+    </LinearLayout>
 
     <Button
         android:id="@+id/export_button"
