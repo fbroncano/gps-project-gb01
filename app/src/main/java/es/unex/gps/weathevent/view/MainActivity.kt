@@ -49,6 +49,16 @@ class MainActivity : AppCompatActivity(), UserParam, OnCiudadClickListener {
     var user: User? = null
     companion object {
         const val USER_INFO = "USER_INFO"
+
+        fun start(
+            context: Context,
+            user: User,
+        ) {
+            val intent = Intent(context, MainActivity::class.java).apply {
+                putExtra(USER_INFO, user)
+            }
+            context.startActivity(intent)
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

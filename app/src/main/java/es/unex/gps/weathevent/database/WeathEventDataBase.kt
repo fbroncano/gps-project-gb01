@@ -7,8 +7,9 @@ import androidx.room.RoomDatabase
 import es.unex.gps.weathevent.model.Ciudad
 import es.unex.gps.weathevent.model.User
 import es.unex.gps.weathevent.model.UserCiudadCrossRef
+import es.unex.gps.weathevent.model.Event
 
-@Database(version = 4, entities = [User::class, Ciudad::class, UserCiudadCrossRef::class], exportSchema = false)
+@Database(version = 5, entities = [User::class, Ciudad::class, Event::class, UserCiudadCrossRef::class], exportSchema = false)
 abstract class WeathEventDataBase : RoomDatabase() {
     abstract fun userDao(): UserDao
     abstract fun eventDao() : EventDao

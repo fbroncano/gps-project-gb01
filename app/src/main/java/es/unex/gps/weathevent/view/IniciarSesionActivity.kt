@@ -82,10 +82,7 @@ class IniciarSesionActivity : AppCompatActivity() {
     }*/
 
     private fun loguear(user: User) {
-        val intent = Intent(this, MainActivity::class.java).apply {
-            putExtra(MainActivity.USER_INFO, user)
-        }
-        startActivity(intent)
+        MainActivity.start(this, user)
     }
 
     private fun validatePassword(user: User): Boolean {
