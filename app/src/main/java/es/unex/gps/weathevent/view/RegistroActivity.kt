@@ -36,9 +36,10 @@ class RegistroActivity : AppCompatActivity() {
             lifecycleScope.launch {
                 val userErrorRegistro = findViewById<TextView>(R.id.errorUserRegistro)
                 val username = findViewById<TextView>(R.id.usernameRegistro).text.toString().trim()
+                val passwd = findViewById<TextView>(R.id.passRegistro).text.toString()
                 var existeUser: User?
                 withContext(Dispatchers.IO) {
-                    existeUser = db.userDao().findByUsername(username)
+                    existeUser = db.userDao().findByUsername(username, passwd)
                 }
                 if(existeUser == null){
                     if (todoValido()) {

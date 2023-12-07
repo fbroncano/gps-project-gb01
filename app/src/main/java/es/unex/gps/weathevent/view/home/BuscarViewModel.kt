@@ -42,8 +42,8 @@ class BuscarViewModel(
                 val application = checkNotNull(extras[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY]) as WeathApplication
 
                 return BuscarViewModel(
-                    application.aplication.ciudadesRepository,
-                    application.aplication.favoritosRepository
+                    application.appContainer.ciudadesRepository,
+                    application.appContainer.favoritosRepository
                 ) as T
             }
         }

@@ -33,17 +33,19 @@ class IniciarSesionActivity : AppCompatActivity() {
 
         // Comprueba que se cumpla cada uno de los tipos de los campos
         val user = findViewById<EditText>(R.id.userLogin)
+        val password = findViewById<EditText>(R.id.passLogin)
         val btnEntrar = findViewById<Button>(R.id.entrar)
 
         btnEntrar.setOnClickListener {
             val username = user.text.toString().trim()
+            val passwd = password.text.toString()
             val errorUser = findViewById<TextView>(R.id.errorUserLogin)
             var user: User?
 
             if (!username.contains(" ") && !username.replace(" ", "").equals("")) {
                 lifecycleScope.launch {
                     withContext(Dispatchers.IO) {
-                        user = db.userDao().findByUsername(username)
+                        user = db.userDao().findByUsername(username, passwd)
                     }
 
                     if (user != null) {
