@@ -11,6 +11,7 @@ import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
@@ -46,6 +47,7 @@ import java.time.LocalDateTime
 class HomeActivity : AppCompatActivity(), UserParam, OnCiudadClickListener, OnClickEventListener {
 
     private val viewModel: IniciarSesionViewModel by viewModels { IniciarSesionViewModel.Factory}
+    private val homeViewModel: HomeViewModel by viewModels()
     private lateinit var binding: ActivityMainBinding
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var db : WeathEventDataBase
@@ -76,6 +78,8 @@ class HomeActivity : AppCompatActivity(), UserParam, OnCiudadClickListener, OnCl
         setContentView(binding.root)
 
         db = WeathEventDataBase.getInstance(this)
+
+        homeViewModel.userInSession = intent.getSerializableExtra(USER_INFO) as User
 
         if (intent.hasExtra(USER_INFO)) {
             user = intent.getSerializableExtra(USER_INFO) as User

@@ -83,7 +83,7 @@ class PronosticoActivity : AppCompatActivity(), CiudadParam {
     private fun ciudadBinding(ciudad: Ciudad) {
 
         lifecycleScope.launch {
-            val isFavorite = favoritosRepository.checkFavorite(ciudad.ciudadId)
+            val isFavorite = favoritosRepository.checkFavorite(1, ciudad.ciudadId)
 
             if (isFavorite) {
                 binding.imageFav.setImageResource(R.drawable.baseline_favorite_border_40)
@@ -93,10 +93,10 @@ class PronosticoActivity : AppCompatActivity(), CiudadParam {
 
             binding.imageFav.setOnClickListener {
                 lifecycleScope.launch {
-                    val isFavorite = favoritosRepository.checkFavorite(ciudad.ciudadId)
+                    val isFavorite = favoritosRepository.checkFavorite(1, ciudad.ciudadId)
 
                     if (isFavorite) {
-                        favoritosRepository.markFavorite(ciudad.ciudadId)
+                        favoritosRepository.markFavorite(1, ciudad.ciudadId)
                         binding.imageFav.setImageResource(R.drawable.baseline_favorite_40_red)
                         Toast.makeText(
                             this@PronosticoActivity,
@@ -104,7 +104,7 @@ class PronosticoActivity : AppCompatActivity(), CiudadParam {
                             Toast.LENGTH_SHORT
                         ).show()
                     } else {
-                        favoritosRepository.desmarkFavorite(ciudad.ciudadId)
+                        favoritosRepository.desmarkFavorite(1, ciudad.ciudadId)
                         binding.imageFav.setImageResource(R.drawable.baseline_favorite_border_40)
                         Toast.makeText(
                             this@PronosticoActivity,

@@ -14,12 +14,9 @@ class AppContainer(context: Context?) {
     private val db = WeathEventDataBase.getInstance(context!!)
 
     val favoritosRepository = FavoritosRepository.getInstance(db.favoritoDao())
-    val eventsRepository = EventsRepository.getInstance(db.eventDao())
+    //val eventsRepository = EventsRepository.getInstance(db.eventDao())
     val ciudadesRepository = CiudadesRepository.getInstance(db.ciudadDao(), networkService)
     val userRepository = UserRepository.getInstance(db.userDao())
 
-    fun setUser(user: User) {
-        favoritosRepository.setUser(user)
-        eventsRepository.setUser(user)
-    }
+
 }
