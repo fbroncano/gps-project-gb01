@@ -1,4 +1,4 @@
-package es.unex.gps.weathevent.view
+package es.unex.gps.weathevent.view.login
 
 import android.content.Intent
 import android.os.Bundle
@@ -7,16 +7,21 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import es.unex.gps.weathevent.R
 import es.unex.gps.weathevent.database.WeathEventDataBase
 import es.unex.gps.weathevent.model.User
+import es.unex.gps.weathevent.view.RegistroActivity
+import es.unex.gps.weathevent.view.home.HomeActivity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class IniciarSesionActivity : AppCompatActivity() {
+
+    private val viewModel: IniciarSesionViewModel by viewModels()
 
     private lateinit var db: WeathEventDataBase
 
@@ -37,28 +42,20 @@ class IniciarSesionActivity : AppCompatActivity() {
 
             if (!username.contains(" ") && !username.replace(" ", "").equals("")) {
                 lifecycleScope.launch {
-                   // try {
-                        withContext(Dispatchers.IO) {
-                            user = db.userDao().findByUsername(username)
-                        }
+                    withContext(Dispatchers.IO) {
+                        user = db.userDao().findByUsername(username)
+                    }
 
-                        if (user != null) {
-                            errorUser.visibility = View.INVISIBLE
+                    if (user != null) {
+                        errorUser.visibility = View.INVISIBLE
 
-                            if (validatePassword(user!!)) {
-                                loguear(user!!)
-                            }
-                        } else {
-                            errorUser.text = "El usuario no existe"
-                            errorUser.visibility = View.VISIBLE
+                        if (validatePassword(user!!)) {
+                            loguear(user!!)
                         }
-                    /*} catch (e: Exception) {
-                        Toast.makeText(
-                            applicationContext,
-                            "Error al acceder a la Base de Datos",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }*/
+                    } else {
+                        errorUser.text = "El usuario no existe"
+                        errorUser.visibility = View.VISIBLE
+                    }
                 }
             } else {
                 errorUser.text = "El usuario no puede contener espacios"
@@ -74,15 +71,9 @@ class IniciarSesionActivity : AppCompatActivity() {
         }
     }
 
-/*
     private fun loguear(user: User) {
-        val intentPerfilActivity = Intent(this, PerfilActivity::class.java)
-        intentPerfilActivity.putExtra("user", user)
-        startActivity(intentPerfilActivity)
-    }*/
-
-    private fun loguear(user: User) {
-        MainActivity.start(this, user)
+        // viewModel.setUser(user)
+        HomeActivity.start(this, user)
     }
 
     private fun validatePassword(user: User): Boolean {
@@ -96,7 +87,7 @@ class IniciarSesionActivity : AppCompatActivity() {
             errorPass.text = "Contraseña incorrecta"
             errorPass.visibility = View.VISIBLE
             false
-        }else {
+        } else {
             errorPass.visibility = View.INVISIBLE
             true
         }

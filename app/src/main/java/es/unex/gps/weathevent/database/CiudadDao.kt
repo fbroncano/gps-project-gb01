@@ -1,38 +1,23 @@
 package es.unex.gps.weathevent.database
 
+import androidx.lifecycle.LiveData
 import androidx.room.Dao
-import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import androidx.room.Transaction
 import es.unex.gps.weathevent.model.Ciudad
-import es.unex.gps.weathevent.model.UserCiudadCrossRef
-import es.unex.gps.weathevent.model.UserWithCiudades
 
 @Dao
 interface CiudadDao {
+    @Query("SELECT * FROM Ciudad")
+    fun getCiudades() : LiveData<List<Ciudad>>
 
-    @Query("SELECT * FROM Ciudad WHERE ciudadId = :id")
-    suspend fun findById(id: Long): Ciudad
+    @Query("SELECT count(*) FROM Ciudad")
+    suspend fun getNumberOfCiudades() : Long
 
-    // Insertar localidad en favoritos
-    @Insert(onConflict = OnConflictStrategy.REPLACE) //En caso de que se intente guardar una tupla idéntica se reemplaza
-    suspend fun insert(ciudad: Ciudad)
+    @Query("SELECT * FROM Ciudad WHERE ciudadId = :ciudadId")
+    suspend fun getCiudad(ciudadId: Long) : Ciudad
 
-    // Borrar localidad de favoritos
-    @Delete
-    suspend fun delete(ciudad: Ciudad)
-    @Transaction
-    @Query("SELECT * FROM User where userId = :userId") //A partir de un usuario nos devuelve todos sus ciudads
-    suspend fun getUserWithCiudades(userId: Long): UserWithCiudades
-
-    // Insertar localidad en favorito
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insertUserCiudad(crossRef: UserCiudadCrossRef)
-    @Transaction
-    suspend fun insertAndRelate(ciudad: Ciudad, userId: Long) {
-        insert(ciudad)
-        insertUserCiudad(UserCiudadCrossRef(userId, ciudad.ciudadId))
-    }
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAll(ciudades : List<Ciudad>)
 }

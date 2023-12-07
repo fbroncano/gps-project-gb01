@@ -8,8 +8,8 @@ import es.unex.gps.weathevent.model.User
 
 @Dao
 interface UserDao {
-    @Query("SELECT * FROM user WHERE username = :first")
-    suspend fun findByUsername(first: String): User
+    @Query("SELECT * FROM user WHERE username = :username AND password = :password")
+    suspend fun findByUsername(username: String, password: String): User
 
     @Query("SELECT * FROM user WHERE email = :first")
     suspend fun findByEmail(first: String): User

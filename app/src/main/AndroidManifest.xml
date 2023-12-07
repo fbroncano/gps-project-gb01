@@ -23,7 +23,7 @@
             android:label="@string/title_activity_add_event"
             android:theme="@style/Theme.WeathEvent" />
         <activity
-            android:name=".view.IniciarSesionActivity"
+            android:name=".view.login.IniciarSesionActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -31,7 +31,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".view.MainActivity" />
+        <activity android:name=".view.home.HomeActivity" />
         <activity android:name=".view.EventDetailsActivity" />
         <activity android:name=".view.RegistroActivity" />
         <activity android:name=".view.PerfilActivity" />

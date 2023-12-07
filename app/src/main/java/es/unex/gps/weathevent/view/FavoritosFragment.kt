@@ -9,6 +9,8 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import es.unex.gps.weathevent.adapter.FavoritosAdapter
+import es.unex.gps.weathevent.data.repositories.FavoritosRepository
+import es.unex.gps.weathevent.database.FavoritoDao
 import es.unex.gps.weathevent.database.WeathEventDataBase
 import es.unex.gps.weathevent.databinding.FragmentFavoritosBinding
 import es.unex.gps.weathevent.interfaces.OnCiudadClickListener
@@ -28,7 +30,7 @@ private const val ARG_PARAM2 = "param2"
 class FavoritosFragment : Fragment() {
 
     private lateinit var db: WeathEventDataBase
-
+    private lateinit var favRepo: FavoritosRepository
     private lateinit var listener: OnCiudadClickListener
 
     private var _binding: FragmentFavoritosBinding? = null
@@ -55,6 +57,7 @@ class FavoritosFragment : Fragment() {
     override fun onAttach(context: android.content.Context) {
         super.onAttach(context)
         db = WeathEventDataBase.getInstance(context)!!
+
         if (context is OnCiudadClickListener) {
             listener = context
         } else {
@@ -73,27 +76,30 @@ class FavoritosFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         user = userParam.getUserFragment()
+        favRepo = FavoritosRepository.getInstance(db.favoritoDao())
         // Inflate the layout for this fragment
         _binding = FragmentFavoritosBinding.inflate(inflater, container, false)
         return binding.root
     }
 
-    override fun onResume() {
-        super.onResume()
-        loadFavorites()
-    }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setUpRecyclerView()
 
-        loadFavorites()
+        suscribeUi(adapter)
+
+    }
+
+    private fun suscribeUi(adapter: FavoritosAdapter) {
+        favRepo.favs.observe(viewLifecycleOwner) {
+            adapter.updateData(it)
+        }
     }
 
     private fun setUpRecyclerView() {
         adapter = FavoritosAdapter(ciudades = favCiudades,
         onFavoriteClick = {
             setNoFavorite(it)
-            loadFavorites()
             Toast.makeText(context, "${it.name} removed from favorites", Toast.LENGTH_SHORT).show()
         }, onCiudadClick = {
             listener.onCiudadClick(it)
@@ -106,18 +112,10 @@ class FavoritosFragment : Fragment() {
         android.util.Log.d("DiscoverFragment", "setUpRecyclerView")
     }
 
-    private fun loadFavorites(){
-        lifecycleScope.launch {
-            binding.spinner.visibility = View.VISIBLE
-            favCiudades = user.userId?.let { db.ciudadDao().getUserWithCiudades(it).ciudades }!!
-            adapter.updateData(favCiudades)
-            binding.spinner.visibility = View.GONE
-        }
-    }
+
     private fun setNoFavorite(ciudad: Ciudad){
         lifecycleScope.launch {
-            ciudad.isFavorite = false
-            db.ciudadDao().delete(ciudad)
+            favRepo.desmarkFavorite(ciudad.ciudadId)
         }
     }
 

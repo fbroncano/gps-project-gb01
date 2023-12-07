@@ -11,6 +11,8 @@ import androidx.lifecycle.lifecycleScope
 import es.unex.gps.weathevent.R
 import es.unex.gps.weathevent.database.WeathEventDataBase
 import es.unex.gps.weathevent.model.User
+import es.unex.gps.weathevent.view.home.HomeActivity
+import es.unex.gps.weathevent.view.login.IniciarSesionActivity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -68,7 +70,7 @@ class RegistroActivity : AppCompatActivity() {
         val context = this
         withContext(Dispatchers.IO) {
             val id = db.userDao().insert(user)
-            MainActivity.start(context, User(id, user.name, user.username, user.email, user.password))
+            HomeActivity.start(context, User(id, user.name, user.username, user.email, user.password))
         }
     }
 

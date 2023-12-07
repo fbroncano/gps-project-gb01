@@ -11,10 +11,17 @@ import androidx.room.ForeignKey
             parentColumns = ["ciudadId"],
             childColumns = ["ciudadId"],
             onDelete = ForeignKey.CASCADE
+        ),
+
+        ForeignKey(
+            entity = User::class,
+            parentColumns = ["userId"],
+            childColumns = ["userId"],
+            onDelete = ForeignKey.CASCADE
         )
     ]
 )
-data class UserCiudadCrossRef(
+data class Favorito (
     val userId: Long,
     val ciudadId: Long
 )

@@ -1,4 +1,4 @@
-package es.unex.gps.weathevent.view
+package es.unex.gps.weathevent.view.home
 
 import android.content.Context
 import android.content.Intent
@@ -8,6 +8,7 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
@@ -35,11 +36,16 @@ import es.unex.gps.weathevent.model.Ciudad
 import es.unex.gps.weathevent.model.Event
 import es.unex.gps.weathevent.model.Fecha
 import es.unex.gps.weathevent.model.User
+import es.unex.gps.weathevent.view.EventDetailsActivity
+import es.unex.gps.weathevent.view.login.IniciarSesionViewModel
+import es.unex.gps.weathevent.view.PerfilActivity
+import es.unex.gps.weathevent.view.PronosticoActivity
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 
-class MainActivity : AppCompatActivity(), UserParam, OnCiudadClickListener, OnClickEventListener {
+class HomeActivity : AppCompatActivity(), UserParam, OnCiudadClickListener, OnClickEventListener {
 
+    private val viewModel: IniciarSesionViewModel by viewModels { IniciarSesionViewModel.Factory}
     private lateinit var binding: ActivityMainBinding
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var db : WeathEventDataBase
@@ -56,7 +62,7 @@ class MainActivity : AppCompatActivity(), UserParam, OnCiudadClickListener, OnCl
             context: Context,
             user: User,
         ) {
-            val intent = Intent(context, MainActivity::class.java).apply {
+            val intent = Intent(context, HomeActivity::class.java).apply {
                 putExtra(USER_INFO, user)
             }
             context.startActivity(intent)
@@ -65,6 +71,7 @@ class MainActivity : AppCompatActivity(), UserParam, OnCiudadClickListener, OnCl
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
@@ -72,6 +79,7 @@ class MainActivity : AppCompatActivity(), UserParam, OnCiudadClickListener, OnCl
 
         if (intent.hasExtra(USER_INFO)) {
             user = intent.getSerializableExtra(USER_INFO) as User
+            // viewModel.setUser(user!!)
             setUpUI()
         }
     }

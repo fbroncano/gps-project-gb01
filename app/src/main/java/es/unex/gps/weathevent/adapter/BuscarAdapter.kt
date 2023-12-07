@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import es.unex.gps.weathevent.R
+import es.unex.gps.weathevent.data.repositories.FavoritosRepository
 import es.unex.gps.weathevent.database.WeathEventDataBase
 import es.unex.gps.weathevent.databinding.SearchItemListBinding
 import es.unex.gps.weathevent.model.Ciudad
@@ -14,33 +15,33 @@ import kotlinx.coroutines.launch
 
 class BuscarAdapter (
     private var ciudades: List<Ciudad>,
+    private val onFavoriteLoad: (ciudad: Ciudad) -> Boolean,
     private val onFavoriteClick: (ciudad: Ciudad) -> Unit,
-    private val onCiudadClick: (ciudad: Ciudad) -> Unit,
-    private val context: Context?,
-    ) : RecyclerView.Adapter<BuscarAdapter.ShowViewHolder>() {
-        class ShowViewHolder(
+    private val onCiudadClick: (ciudad: Ciudad) -> Unit
+    ) : RecyclerView.Adapter<BuscarAdapter.CiudadViewHolder>() {
+        class CiudadViewHolder(
             private val binding: SearchItemListBinding,
+            private val onFavoriteLoad: (ciudad: Ciudad) -> Boolean,
             private val onFavoriteClick: (ciudad: Ciudad) -> Unit,
             private val onCiudadClick: (ciudad: Ciudad) -> Unit,
-            private val context: Context?,
-            private val db: WeathEventDataBase = context?.let { WeathEventDataBase.getInstance(it) }!!
-
         ) : RecyclerView.ViewHolder(binding.root) {
 
             fun bind(ciudad: Ciudad, totalItems: Int) {
 
+                var isFavorite = onFavoriteLoad(ciudad)
+
                 with(binding) {
                     cityName.text = ciudad.name
 
-                    if (ciudad.isFavorite) {
+                    if (isFavorite) {
                         favoriteIcon.setImageResource(R.drawable.baseline_favorite_red_24)
                     } else {
                         favoriteIcon.setImageResource(R.drawable.baseline_favorite_border_40)
                     }
 
                     favoriteIcon.setOnClickListener {
-                        if(!ciudad.isFavorite) {
-                            ciudad.isFavorite = true
+
+                        if(!isFavorite) {
                             favoriteIcon.setImageResource(R.drawable.baseline_favorite_red_24)
                             onFavoriteClick(ciudad)
                         }
@@ -51,22 +52,20 @@ class BuscarAdapter (
                     }
                 }
             }
-
-
         }
 
-
-        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ShowViewHolder {
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CiudadViewHolder {
             val binding =
                 SearchItemListBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-            return ShowViewHolder(binding, onFavoriteClick, onCiudadClick,context)
+
+            return CiudadViewHolder(binding, onFavoriteLoad, onFavoriteClick, onCiudadClick)
         }
 
         override fun getItemCount() = ciudades.size
 
 
 
-        override fun onBindViewHolder(holder: ShowViewHolder, position: Int) {
+        override fun onBindViewHolder(holder: CiudadViewHolder, position: Int) {
             holder.bind(ciudades[position], ciudades.size)
         }
 

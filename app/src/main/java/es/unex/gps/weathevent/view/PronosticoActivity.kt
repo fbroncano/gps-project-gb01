@@ -14,6 +14,7 @@ import androidx.navigation.ui.setupWithNavController
 import es.unex.gps.weathevent.R
 import es.unex.gps.weathevent.api.APIHelpers
 import es.unex.gps.weathevent.api.getElTiempoService
+import es.unex.gps.weathevent.data.repositories.FavoritosRepository
 import es.unex.gps.weathevent.database.WeathEventDataBase
 import es.unex.gps.weathevent.databinding.ActivityPronosticoBinding
 import es.unex.gps.weathevent.interfaces.CiudadParam
@@ -27,6 +28,7 @@ class PronosticoActivity : AppCompatActivity(), CiudadParam {
     private lateinit var appBarConfiguration: AppBarConfiguration
     private var ciudad : Ciudad? = null
     private lateinit var user : User
+    private lateinit var favoritosRepository: FavoritosRepository
 
     private val navController by lazy {
         (supportFragmentManager.findFragmentById(R.id.pronostico_nav_host_fragment) as NavHostFragment).navController
@@ -43,6 +45,8 @@ class PronosticoActivity : AppCompatActivity(), CiudadParam {
         ciudad = intent.getSerializableExtra(CIUDAD) as Ciudad?
         user = intent.getSerializableExtra(USER_INFO) as User
         db = WeathEventDataBase.getInstance(this)!!
+
+        favoritosRepository = FavoritosRepository.getInstance(db.favoritoDao())
         binding.pronosticoNavigation.setupWithNavController(navController)
         setUiViews()
         ciudadBinding(ciudad!!)
@@ -78,24 +82,36 @@ class PronosticoActivity : AppCompatActivity(), CiudadParam {
 
     private fun ciudadBinding(ciudad: Ciudad) {
 
-        if (!ciudad.isFavorite){
-            binding.imageFav.setImageResource(R.drawable.baseline_favorite_border_40)
-        }else{
-            binding.imageFav.setImageResource(R.drawable.baseline_favorite_40_red)
-        }
+        lifecycleScope.launch {
+            val isFavorite = favoritosRepository.checkFavorite(ciudad.ciudadId)
 
-        binding.imageFav.setOnClickListener {
-            lifecycleScope.launch {
-                if (!ciudad.isFavorite) {
-                    ciudad.isFavorite = true
-                    user.userId?.let { it1 -> db.ciudadDao().insertAndRelate(ciudad, it1) }
-                    binding.imageFav.setImageResource(R.drawable.baseline_favorite_40_red)
-                    Toast.makeText(this@PronosticoActivity, "${ciudad.name} añadido a favoritos", Toast.LENGTH_SHORT).show()
-                } else {
-                    ciudad.isFavorite = false
-                    db.ciudadDao().delete(ciudad)
-                    binding.imageFav.setImageResource(R.drawable.baseline_favorite_border_40)
-                    Toast.makeText(this@PronosticoActivity, "${ciudad.name} eliminado de favoritos", Toast.LENGTH_SHORT).show()
+            if (isFavorite) {
+                binding.imageFav.setImageResource(R.drawable.baseline_favorite_border_40)
+            } else {
+                binding.imageFav.setImageResource(R.drawable.baseline_favorite_40_red)
+            }
+
+            binding.imageFav.setOnClickListener {
+                lifecycleScope.launch {
+                    val isFavorite = favoritosRepository.checkFavorite(ciudad.ciudadId)
+
+                    if (isFavorite) {
+                        favoritosRepository.markFavorite(ciudad.ciudadId)
+                        binding.imageFav.setImageResource(R.drawable.baseline_favorite_40_red)
+                        Toast.makeText(
+                            this@PronosticoActivity,
+                            "${ciudad.name} añadido a favoritos",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    } else {
+                        favoritosRepository.desmarkFavorite(ciudad.ciudadId)
+                        binding.imageFav.setImageResource(R.drawable.baseline_favorite_border_40)
+                        Toast.makeText(
+                            this@PronosticoActivity,
+                            "${ciudad.name} eliminado de favoritos",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
                 }
             }
         }

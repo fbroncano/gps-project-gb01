@@ -15,12 +15,3 @@ data class Event(
     val userid : Long,
     val locationId : Long
 ) : Serializable
-
-data class UserWithEvent(
-    @Embedded val user_val : User,
-    @Relation(
-        parentColumn = "id",
-        entityColumn = "user_val"
-    )
-    val events : Array<Event>
-)

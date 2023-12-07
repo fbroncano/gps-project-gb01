@@ -13,7 +13,7 @@
         tools:layout="@layout/fragment_favoritos" />
     <fragment
         android:id="@+id/buscarFragment"
-        android:name="es.unex.gps.weathevent.view.BuscarFragment"
+        android:name="es.unex.gps.weathevent.view.home.BuscarFragment"
         android:label="@string/search_option"
         tools:layout="@layout/fragment_buscar" />
     <fragment
