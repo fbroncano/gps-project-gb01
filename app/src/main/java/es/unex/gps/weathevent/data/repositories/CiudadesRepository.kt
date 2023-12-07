@@ -1,5 +1,7 @@
 package es.unex.gps.weathevent.data.repositories
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MediatorLiveData
 import es.unex.gps.weathevent.api.APIError
 import es.unex.gps.weathevent.api.ElTiempoAPI
 import es.unex.gps.weathevent.data.api.Municipio
@@ -12,6 +14,8 @@ class CiudadesRepository private constructor(
     private val networkService: ElTiempoAPI
 ) {
     val ciudades = ciudadDao.getCiudades()
+
+
     suspend fun tryUpdateRecentCiudadesCache() {
         if (shouldUpdateCiudadesCache())
             fetchCiudades()

@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import es.unex.gps.weathevent.model.Ciudad
 import es.unex.gps.weathevent.model.Favorito
@@ -17,7 +18,7 @@ interface FavoritoDao {
     @Query("SELECT count(*) FROM Favorito WHERE userId = :userId AND  ciudadId = :ciudadId")
     suspend fun getFavorito(userId: Long, ciudadId: Long) : Long
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertFavorito(favorito: Favorito)
 
     @Delete

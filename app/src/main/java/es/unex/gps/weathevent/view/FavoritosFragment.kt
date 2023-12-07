@@ -1,11 +1,14 @@
 package es.unex.gps.weathevent.view
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import es.unex.gps.weathevent.adapter.FavoritosAdapter
@@ -17,6 +20,8 @@ import es.unex.gps.weathevent.interfaces.OnCiudadClickListener
 import es.unex.gps.weathevent.interfaces.UserParam
 import es.unex.gps.weathevent.model.Ciudad
 import es.unex.gps.weathevent.model.User
+import es.unex.gps.weathevent.view.home.BuscarViewModel
+import es.unex.gps.weathevent.view.home.HomeViewModel
 import kotlinx.coroutines.launch
 
 /**
@@ -30,6 +35,8 @@ private const val ARG_PARAM2 = "param2"
 class FavoritosFragment : Fragment() {
 
     private lateinit var db: WeathEventDataBase
+    private val homeViewModel: HomeViewModel by activityViewModels()
+    private val viewModel: FavoritosViewModel by viewModels{ FavoritosViewModel.Factory }
     private lateinit var favRepo: FavoritosRepository
     private lateinit var listener: OnCiudadClickListener
 
@@ -42,16 +49,8 @@ class FavoritosFragment : Fragment() {
     private lateinit var userParam: UserParam
     private lateinit var user: User
 
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
     }
 
     override fun onAttach(context: android.content.Context) {
@@ -86,20 +85,26 @@ class FavoritosFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         setUpRecyclerView()
 
-        suscribeUi(adapter)
+        homeViewModel.user.observe(viewLifecycleOwner) { user ->
+            viewModel.user = user
+        }
 
+        Log.e("","suscribeUi")
+        suscribeUi(adapter)
     }
 
     private fun suscribeUi(adapter: FavoritosAdapter) {
-        favRepo.favs.observe(viewLifecycleOwner) {
+        viewModel.favorites.observe(viewLifecycleOwner) {
+            var ciudad: Ciudad = it[1]
+            Log.e("Ciudad", "${ciudad.name}")
             adapter.updateData(it)
         }
     }
 
     private fun setUpRecyclerView() {
-        adapter = FavoritosAdapter(ciudades = favCiudades,
+        adapter = FavoritosAdapter(ciudades = emptyList(),
         onFavoriteClick = {
-            setNoFavorite(it)
+            viewModel.setNoFavorite(it)
             Toast.makeText(context, "${it.name} removed from favorites", Toast.LENGTH_SHORT).show()
         }, onCiudadClick = {
             listener.onCiudadClick(it)
@@ -113,11 +118,7 @@ class FavoritosFragment : Fragment() {
     }
 
 
-    private fun setNoFavorite(ciudad: Ciudad){
-        lifecycleScope.launch {
-            favRepo.desmarkFavorite(ciudad.ciudadId)
-        }
-    }
+
 
     override fun onDestroyView() {
         super.onDestroyView()
