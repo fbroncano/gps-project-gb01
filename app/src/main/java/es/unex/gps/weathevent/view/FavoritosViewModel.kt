@@ -16,8 +16,7 @@ import es.unex.gps.weathevent.model.User
 import kotlinx.coroutines.launch
 
 class FavoritosViewModel(
-private val favoritosRepository: FavoritosRepository,
-private val userRepository: UserRepository
+private val favoritosRepository: FavoritosRepository
 ): ViewModel() {
 
     val favorites = favoritosRepository.favs
@@ -50,9 +49,7 @@ private val userRepository: UserRepository
                 val application = checkNotNull(extras[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY])
 
                 return FavoritosViewModel(
-                    (application as WeathApplication).appContainer.favoritosRepository,
-                    application.appContainer.userRepository
-                    ) as T
+                    (application as WeathApplication).appContainer.favoritosRepository) as T
             }
         }
     }
