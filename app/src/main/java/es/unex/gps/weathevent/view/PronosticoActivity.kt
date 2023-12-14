@@ -2,6 +2,7 @@ package es.unex.gps.weathevent.view
 
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.widget.Toast
 import androidx.activity.viewModels
@@ -30,8 +31,6 @@ class PronosticoActivity : AppCompatActivity() {
     private lateinit var binding : ActivityPronosticoBinding
     private lateinit var appBarConfiguration: AppBarConfiguration
 
-    private lateinit var favoritosRepository: FavoritosRepository
-
     private val homeViewModel: HomeViewModel by viewModels()
     private val viewModel: PronosticoViewModel by viewModels{ PronosticoViewModel.Factory}
 
@@ -47,17 +46,19 @@ class PronosticoActivity : AppCompatActivity() {
         binding = ActivityPronosticoBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        viewModel.init(applicationContext)
-        homeViewModel.user.observe(this) { user ->
-            viewModel.user = user
-        }
-
         viewModel.binding = binding
 
-        viewModel.ciudadActual = intent.getSerializableExtra(CIUDAD) as Ciudad?
+        viewModel._ciudad.value = intent.getSerializableExtra(CIUDAD) as Ciudad?
+
+        //TODO: Tampoco funciona
+        homeViewModel.user.observe(this) { user ->
+            user?.let {
+                Log.e("", "${user.name}")
+                viewModel.userId = user.userId ?: 1
+            }
+        }
         db = WeathEventDataBase.getInstance(this)!!
 
-        favoritosRepository = FavoritosRepository.getInstance(db.favoritoDao())
         binding.pronosticoNavigation.setupWithNavController(navController)
         viewModel.setUiViews()
         viewModel.ciudadBinding()

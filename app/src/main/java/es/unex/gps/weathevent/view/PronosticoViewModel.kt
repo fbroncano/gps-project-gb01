@@ -3,55 +3,67 @@ package es.unex.gps.weathevent.view
 import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Build
+import android.util.Log
 import android.widget.Toast
 import androidx.annotation.RequiresApi
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.CreationExtras
 import es.unex.gps.weathevent.R
 import es.unex.gps.weathevent.WeathApplication
+import es.unex.gps.weathevent.adapter.ProximosDiasAdapter
+import es.unex.gps.weathevent.api.APIError
 import es.unex.gps.weathevent.api.APIHelpers
 import es.unex.gps.weathevent.api.getElTiempoService
+import es.unex.gps.weathevent.data.api.ProximosDiasArray
+import es.unex.gps.weathevent.data.api.ProximosDiasSingle
 import es.unex.gps.weathevent.data.repositories.FavoritosRepository
+import es.unex.gps.weathevent.data.repositories.PronosticoRepository
 import es.unex.gps.weathevent.databinding.ActivityPronosticoBinding
 import es.unex.gps.weathevent.model.Ciudad
+import es.unex.gps.weathevent.model.Fecha
+import es.unex.gps.weathevent.model.ProximosDiasTiempo
+import es.unex.gps.weathevent.model.TiempoPorHora
 import es.unex.gps.weathevent.model.User
 import kotlinx.coroutines.launch
+import java.time.LocalDateTime
+
 
 class PronosticoViewModel(
-    private val favoritosRepository: FavoritosRepository
+    private val favoritosRepository: FavoritosRepository,
+    private val pronosticoRepository: PronosticoRepository
 ): ViewModel()  {
-    var applicationContext: Context? = null
-    var user: User? = null
+    var userId: Long? = 1
 
-    val _ciudad = MutableLiveData<Ciudad>(null)
-    var ciudad: LiveData<Ciudad> = TODO()
+    val _ciudad = MutableLiveData<Ciudad?>()
+    val ciudad: LiveData<Ciudad?>
         get() = _ciudad
-    var ciudadActual: Ciudad? = null
-        set(value) {
-            field = value
-            _ciudad.value = value!!
-        }
+
     lateinit var binding : ActivityPronosticoBinding
 
-    fun init(context : Context){
-        applicationContext = context
-    }
+    private val _tiempos = MutableLiveData<MutableList<TiempoPorHora>>()
+    val tiempos: LiveData<MutableList<TiempoPorHora>>
+        get() = _tiempos
+
+    private val _dias = MutableLiveData<MutableList<ProximosDiasTiempo>>()
+    val dias: LiveData<MutableList<ProximosDiasTiempo>>
+        get() = _dias
     @RequiresApi(Build.VERSION_CODES.O)
     fun setUiViews() {
         viewModelScope.launch {
             if (ciudad.value?.ciudadId != null) {
-                val codProv = APIHelpers.getCodProv(ciudad.value!!.ciudadId)
-                val ciudadId = APIHelpers.getCiudadFormat(ciudad.value!!.ciudadId)
 
-                val response = getElTiempoService().getMunicipio(codProv, ciudadId)
+                val response = pronosticoRepository.getMunicipioResponse(ciudad.value!!)
 
-                binding.municipioView.text = ciudad.value!!.name
-                binding.descripcionView.text = response.stateSky?.description
-                binding.temperatureView.text = APIHelpers.convertTempToPreferences(response.temperaturaActual?.toLong()!!, applicationContext!!)
+                binding.municipioView.text = ciudad.value?.name
+                binding.descripcionView.text = pronosticoRepository.getStateSky(response)
+                binding.temperatureView.text = pronosticoRepository.getTemperature(response)
             } else {
                 binding.municipioView.text = "No hay municipio a mostrar"
             }
@@ -61,7 +73,8 @@ class PronosticoViewModel(
     fun ciudadBinding() {
 
         viewModelScope.launch {
-            val isFavorite = favoritosRepository.checkFavorite(user?.userId!!, ciudad.value!!.ciudadId)
+            Log.d("","${userId} ${ciudad.value?.name}")
+            val isFavorite = favoritosRepository.checkFavorite(userId!!, ciudad.value!!.ciudadId)
 
             if (isFavorite) {
                 binding.imageFav.setImageResource(R.drawable.baseline_favorite_border_40)
@@ -71,10 +84,10 @@ class PronosticoViewModel(
 
             binding.imageFav.setOnClickListener {
                 viewModelScope.launch {
-                    val isFavorite = favoritosRepository.checkFavorite(user?.userId!!, ciudad.value!!.ciudadId)
+                    val isFavorite = favoritosRepository.checkFavorite(userId!!, ciudad.value!!.ciudadId)
 
                     if (isFavorite) {
-                        favoritosRepository.markFavorite(user?.userId!!, ciudad.value!!.ciudadId)
+                        favoritosRepository.markFavorite(userId!!, ciudad.value!!.ciudadId)
                         binding.imageFav.setImageResource(R.drawable.baseline_favorite_40_red)
                         /*Toast.makeText(
                             this,
@@ -82,7 +95,7 @@ class PronosticoViewModel(
                             Toast.LENGTH_SHORT
                         ).show()*/
                     } else {
-                        favoritosRepository.desmarkFavorite(user?.userId!!, ciudad.value!!.ciudadId)
+                        favoritosRepository.desmarkFavorite(userId!!, ciudad.value!!.ciudadId)
                         binding.imageFav.setImageResource(R.drawable.baseline_favorite_border_40)
                         /*
                         Toast.makeText(
@@ -96,6 +109,111 @@ class PronosticoViewModel(
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
+    suspend fun getProximasHoras(context: Context, adapter: ProximasHorasAdapter){
+                try {
+                    Log.d("","${ciudad.value?.name}")
+                    val response = pronosticoRepository.getMunicipioResponse(ciudad.value!!)
+
+                    val horasHoy = response.pronostico?.hoy?.viento?.map {
+                        it.attributes?.periodo
+                    }
+
+                    var hour = LocalDateTime.now().hour.toString()
+                    if (hour.length == 1) hour = "0$hour"
+
+                    val index = horasHoy?.indexOf(hour)!!
+
+                    // Se añaden las horas restantes del día en curso
+                    if (index != -1) {
+                        if ((index + 1) < horasHoy?.size!!) {
+                            for (i in (index + 1)..< horasHoy?.size!!) {
+                                _tiempos.value!!.add(
+                                    TiempoPorHora(
+                                        horasHoy?.get(i)!! + ":00",
+                                        APIHelpers.convertTempToPreferences(response.pronostico?.hoy?.temperatura?.get(i)!!.toLong(), context),
+                                        response.pronostico?.hoy?.estadoCieloDescripcion?.get(i)!!
+                                    )
+                                )
+                            }
+                        }
+                    }
+
+                    // Se añaden las horas del día siguiente
+                    val horasManana = response.pronostico?.manana?.viento?.map {
+                        it.attributes?.periodo
+                    }
+
+                    Log.d("INDICES", index.toString() + " " + horasHoy?.size.toString() + " " + horasManana?.size.toString())
+                    for (i in 0..< horasManana?.size!!) {
+                        //TODO: Comprobar insercion de values
+                        _tiempos.value!!.add(
+                            TiempoPorHora(
+                                horasManana?.get(i)!! + ":00",
+                                APIHelpers.convertTempToPreferences(response.pronostico?.manana?.temperatura?.get(i)!!.toLong(),context),
+                                response.pronostico?.manana?.estadoCieloDescripcion?.get(i)!!
+                            )
+                        )
+                    }
+
+                    adapter.updateData(_tiempos.value!!)
+                } catch (error: APIError) {
+                    //Toast.makeText(context, error.message, Toast.LENGTH_SHORT).show()
+                }
+    }
+
+    suspend fun getProximosDias(context: Context, adapter: ProximosDiasAdapter){
+            if (_dias.value!!.isEmpty()) {
+                try {
+                    val response = pronosticoRepository.getMunicipioResponse(ciudad.value!!)
+                    response.obtainProximosDias()
+
+                    for (obj in response.proximosDias) {
+                        if (obj is ProximosDiasArray) {
+                            val dates = obj.attributes?.fecha?.split("-")
+                            val fecha = Fecha(dates?.get(2)?.toInt()!!, dates?.get(1)?.toInt()!!, dates?.get(0)?.toInt()!!, 0, 0)
+
+                            _dias.value!!.add(
+                                ProximosDiasTiempo(
+                                    fecha.getFormatDay(),
+                                    "${APIHelpers.convertTempToPreferences(obj.temperatura?.minima?.toLong()!!, context)}\n${APIHelpers.convertTempToPreferences(obj.temperatura?.maxima?.toLong()!!, context)}",
+                                    obj.estadoCieloDescripcion?.get(0)!!,
+                                    "Sens. ter.: ${APIHelpers.convertTempToPreferences(obj.sensTermica?.minima?.toLong()!!, context)} - ${APIHelpers.convertTempToPreferences(obj.sensTermica?.maxima?.toLong()!!, context)}",
+                                    "Precipitacion: ${obj.probPrecipitacion?.get(0)!!}%",
+                                    "Viento: ${APIHelpers.convertVelToPreferences(obj.viento?.get(0)?.velocidad?.toLong()!!, context)} ${obj.viento?.get(0)?.direccion}"
+                                )
+                            )
+                        } else if (obj is ProximosDiasSingle) {
+                            val dates = obj.attributes?.fecha?.split("-")
+                            val fecha = Fecha(dates?.get(2)?.toInt()!!, dates?.get(1)?.toInt()!!, dates?.get(0)?.toInt()!!, 0, 0)
+
+                            _dias.value!!.add(
+                                ProximosDiasTiempo(
+                                    fecha.getFormatDay(),
+                                    "${APIHelpers.convertTempToPreferences(obj.temperatura?.minima?.toLong()!!, context)}\n${APIHelpers.convertTempToPreferences(obj.temperatura?.maxima?.toLong()!!, context)}",
+                                    obj.estadoCieloDescripcion!!,
+                                    "Sens. ter.: ${APIHelpers.convertTempToPreferences(obj.sensTermica?.minima?.toLong()!!, context)} - ${APIHelpers.convertTempToPreferences(obj.sensTermica?.maxima?.toLong()!!, context)}",
+                                    "Precipitacion: ${obj.probPrecipitacion?.get(0)!!}%",
+                                    "Viento: ${APIHelpers.convertVelToPreferences(obj.viento?.velocidad?.toLong()!!, context)} ${obj.viento?.direccion}"
+                                )
+                            )
+                        }
+                    }
+
+
+                    adapter.updateData(_dias.value!!)
+                } catch (error: APIError) {
+                    Toast.makeText(context, error.message, Toast.LENGTH_SHORT).show()
+                }
+            }
+
+    }
+
+    init {
+        _tiempos.value = mutableListOf()
+        _dias.value = mutableListOf()
+    }
+
     companion object {
         val Factory: ViewModelProvider.Factory = object : ViewModelProvider.Factory {
             @Suppress("UNCHECKED_CAST")
@@ -107,7 +225,8 @@ class PronosticoViewModel(
                 val application = checkNotNull(extras[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY])
 
                 return PronosticoViewModel(
-                    (application as WeathApplication).appContainer.favoritosRepository
+                    (application as WeathApplication).appContainer.favoritosRepository,
+                    application.appContainer.pronosticoRepository
                 ) as T
             }
         }
