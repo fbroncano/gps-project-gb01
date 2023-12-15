@@ -8,14 +8,14 @@ import es.unex.gps.weathevent.model.User
 class UserRepository private constructor(
     private val userDao: UserDao
 ) {
-    private val userFilter = MutableLiveData<Long>()
-    suspend fun checkUserSesion(username: String, password: String) {
-        userDao.findByUsername(username, password)
+    suspend fun checkUserSesion(username: String, password: String): User? {
+        return userDao.findByUsername(username, password)
     }
 
-    fun setUserid(userid: Long) {
-        userFilter.value = userid
+    suspend fun insertUser(user: User): Long {
+        return userDao.insert(user)
     }
+
     companion object {
         @Volatile
         private var INSTANCE: UserRepository? = null

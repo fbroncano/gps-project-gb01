@@ -1,17 +1,28 @@
 package es.unex.gps.weathevent.data.repositories
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.switchMap
 import es.unex.gps.weathevent.database.EventDao
+import es.unex.gps.weathevent.model.Ciudad
+import es.unex.gps.weathevent.model.Event
 import es.unex.gps.weathevent.model.User
 
 class EventsRepository private constructor(
     private val eventDao: EventDao
 ) {
-    var userId: Long? = null
+    val user = MutableLiveData<User>(null)
 
-    val events = eventDao.searchByUser(userId!!)
-
+    val events: LiveData<List<Event>> =
+        user.switchMap{
+            eventDao.searchByUser(it.userId!!)
+        }
     fun setUser(user: User) {
-        userId = user.userId
+        this.user.value = user
+    }
+
+    suspend fun addEvent(event: Event) {
+        eventDao.insertEvent(event)
     }
 
     companion object {

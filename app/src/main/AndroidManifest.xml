@@ -16,10 +16,10 @@
         android:theme="@style/Theme.WeathEvent"
         tools:targetApi="31">
         <activity
-            android:name=".view.PronosticoActivity"
+            android:name=".view.weather.PronosticoActivity"
             android:exported="false" />
         <activity
-            android:name=".view.AddEventActivity"
+            android:name=".view.events.AddEventActivity"
             android:exported="false"
             android:label="@string/title_activity_add_event"
             android:theme="@style/Theme.WeathEvent" />
@@ -33,8 +33,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".view.home.HomeActivity" />
-        <activity android:name=".view.EventDetailsActivity" />
-        <activity android:name=".view.RegistroActivity" />
+        <activity android:name=".view.events.EventDetailsActivity" />
+        <activity android:name=".view.login.RegistroActivity" />
         <activity android:name=".view.PerfilActivity" />
     </application>
 

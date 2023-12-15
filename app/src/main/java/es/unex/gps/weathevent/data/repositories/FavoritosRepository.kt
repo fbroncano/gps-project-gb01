@@ -6,30 +6,33 @@ import androidx.lifecycle.switchMap
 import es.unex.gps.weathevent.database.FavoritoDao
 import es.unex.gps.weathevent.model.Ciudad
 import es.unex.gps.weathevent.model.Favorito
+import es.unex.gps.weathevent.model.User
 
 class FavoritosRepository private constructor(
     private val favoritoDao: FavoritoDao
 ) {
 
-    private val userFilter = MutableLiveData<Long>()
+    val user = MutableLiveData<User>(null)
 
     val favs: LiveData<List<Ciudad>> =
-        userFilter.switchMap{ userid -> favoritoDao.getCiudadUser(userid) }
+        user.switchMap{
+            favoritoDao.getCiudadUser(it.userId!!)
+        }
 
-    fun setUserid(userid: Long) {
-        userFilter.value = userid
+    fun setUser(user: User) {
+        this.user.value = user
     }
 
-    suspend fun markFavorite(userid: Long, ciudadId: Long) {
-        favoritoDao.insertFavorito(Favorito(userid, ciudadId))
+    suspend fun markFavorite(ciudadId: Long) {
+        favoritoDao.insertFavorito(Favorito(user.value?.userId!!, ciudadId))
     }
 
-    suspend fun desmarkFavorite(userid: Long, ciudadId: Long) {
-        favoritoDao.deleteFavorito(Favorito(userid, ciudadId))
+    suspend fun desmarkFavorite(ciudadId: Long) {
+        favoritoDao.deleteFavorito(Favorito(user.value?.userId!!, ciudadId))
     }
 
-    suspend fun checkFavorite(userid: Long, ciudadId: Long) : Boolean {
-        return favoritoDao.getFavorito(userid, ciudadId) != 1L
+    suspend fun checkFavorite(ciudadId: Long) : Boolean {
+        return favoritoDao.getFavorito(user.value?.userId!!, ciudadId) == 1L
     }
 
     companion object {

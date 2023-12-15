@@ -1,14 +1,13 @@
-package es.unex.gps.weathevent.view
+package es.unex.gps.weathevent.view.favorites
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.switchMap
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.CreationExtras
 import es.unex.gps.weathevent.WeathApplication
-import es.unex.gps.weathevent.data.repositories.CiudadesRepository
 import es.unex.gps.weathevent.data.repositories.FavoritosRepository
 import es.unex.gps.weathevent.data.repositories.UserRepository
 import es.unex.gps.weathevent.model.Ciudad
@@ -16,25 +15,20 @@ import es.unex.gps.weathevent.model.User
 import kotlinx.coroutines.launch
 
 class FavoritosViewModel(
-private val favoritosRepository: FavoritosRepository,
-private val userRepository: UserRepository
+    private val favoritosRepository: FavoritosRepository
 ): ViewModel() {
 
-    val favorites = favoritosRepository.favs
+    var favChange = MutableLiveData(0)
 
-    private val _toast = MutableLiveData<String?>()
-    val toast: LiveData<String?>
-    get() = _toast
-
-    var user: User? = null
-        set(value) {
-            field = value
-            favoritosRepository.setUserid(value!!.userId!!)
+    val favorites: LiveData<List<Ciudad>>
+        get() = favChange.switchMap {
+            favoritosRepository.favs
         }
 
-    fun setNoFavorite(ciudad: Ciudad){
+    fun setNoFavorite(ciudad: Ciudad) {
         viewModelScope.launch {
-            favoritosRepository.desmarkFavorite(user?.userId!!, ciudad.ciudadId)
+            favoritosRepository.desmarkFavorite(ciudad.ciudadId)
+            favChange.value =+ 1
         }
     }
 
@@ -50,9 +44,8 @@ private val userRepository: UserRepository
                 val application = checkNotNull(extras[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY])
 
                 return FavoritosViewModel(
-                    (application as WeathApplication).appContainer.favoritosRepository,
-                    application.appContainer.userRepository
-                    ) as T
+                    (application as WeathApplication).appContainer.favoritosRepository
+                ) as T
             }
         }
     }

@@ -8,17 +8,17 @@
 
     <fragment
         android:id="@+id/favoritosFragment"
-        android:name="es.unex.gps.weathevent.view.FavoritosFragment"
+        android:name="es.unex.gps.weathevent.view.favorites.FavoritosFragment"
         android:label="@string/favourite_option"
         tools:layout="@layout/fragment_favoritos" />
     <fragment
         android:id="@+id/buscarFragment"
-        android:name="es.unex.gps.weathevent.view.home.BuscarFragment"
+        android:name="es.unex.gps.weathevent.view.buscar.BuscarFragment"
         android:label="@string/search_option"
         tools:layout="@layout/fragment_buscar" />
     <fragment
         android:id="@+id/listEventFragment"
-        android:name="es.unex.gps.weathevent.view.ListEventFragment"
+        android:name="es.unex.gps.weathevent.view.events.ListEventFragment"
         android:label="@string/fragment_list_event"
         tools:layout="@layout/fragment_list_event" />
     <fragment

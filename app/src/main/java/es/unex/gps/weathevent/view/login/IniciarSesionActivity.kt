@@ -12,8 +12,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import es.unex.gps.weathevent.R
 import es.unex.gps.weathevent.database.WeathEventDataBase
+import es.unex.gps.weathevent.databinding.ActivityIniciarSesionBinding
 import es.unex.gps.weathevent.model.User
-import es.unex.gps.weathevent.view.RegistroActivity
 import es.unex.gps.weathevent.view.home.HomeActivity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -21,77 +21,39 @@ import kotlinx.coroutines.withContext
 
 class IniciarSesionActivity : AppCompatActivity() {
 
-    private val viewModel: IniciarSesionViewModel by viewModels()
-
-    private lateinit var db: WeathEventDataBase
+    private val viewModel: IniciarSesionViewModel by viewModels { IniciarSesionViewModel.Factory }
+    private lateinit var binding: ActivityIniciarSesionBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_iniciar_sesion)
+        binding = ActivityIniciarSesionBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        db = WeathEventDataBase.getInstance(applicationContext)
+        binding.entrar.setOnClickListener {
+            lifecycleScope.launch {
+                val error = viewModel.login(
+                    binding.userLogin.text.toString().trim(),
+                    binding.passLogin.text.toString().trim()
+                )
 
-        // Comprueba que se cumpla cada uno de los tipos de los campos
-        val user = findViewById<EditText>(R.id.userLogin)
-        val password = findViewById<EditText>(R.id.passLogin)
-        val btnEntrar = findViewById<Button>(R.id.entrar)
-
-        btnEntrar.setOnClickListener {
-            val username = user.text.toString().trim()
-            val passwd = password.text.toString()
-            val errorUser = findViewById<TextView>(R.id.errorUserLogin)
-            var user: User?
-
-            if (!username.contains(" ") && !username.replace(" ", "").equals("")) {
-                lifecycleScope.launch {
-                    withContext(Dispatchers.IO) {
-                        user = db.userDao().findByUsername(username, passwd)
-                    }
-
-                    if (user != null) {
-                        errorUser.visibility = View.INVISIBLE
-
-                        if (validatePassword(user!!)) {
-                            loguear(user!!)
-                        }
-                    } else {
-                        errorUser.text = "El usuario no existe"
-                        errorUser.visibility = View.VISIBLE
-                    }
+                if (error != null) {
+                    binding.errorUserLogin.text = error
+                    binding.errorUserLogin.visibility = View.VISIBLE
+                } else {
+                    loguear(viewModel.user!!)
                 }
-            } else {
-                errorUser.text = "El usuario no puede contener espacios"
-                errorUser.visibility = View.VISIBLE
             }
         }
 
         // Escucha cuando se pulsa el Botón que redirige a Iniciar Sesión
-        val btnRegistroActivity = findViewById<Button>(R.id.registro)
-        btnRegistroActivity.setOnClickListener {
+        binding.registro.setOnClickListener {
             val intent = Intent(this, RegistroActivity::class.java)
             startActivity(intent)
         }
     }
 
     private fun loguear(user: User) {
-        // viewModel.setUser(user)
         HomeActivity.start(this, user)
     }
 
-    private fun validatePassword(user: User): Boolean {
-        val password = findViewById<EditText>(R.id.passLogin).text.toString().trim()
-        val errorPass = findViewById<TextView>(R.id.errorPassLogin)
-
-        return if (password.isEmpty()) {
-            Toast.makeText(this, "El campo de contraseña no puede estar vacío", Toast.LENGTH_SHORT).show()
-            false
-        } else if (password.replace(" ", "").equals("") || password.contains(" ") || password != user.password){
-            errorPass.text = "Contraseña incorrecta"
-            errorPass.visibility = View.VISIBLE
-            false
-        } else {
-            errorPass.visibility = View.INVISIBLE
-            true
-        }
-    }
 }

@@ -7,14 +7,14 @@
 
     <fragment
         android:id="@+id/proximasHorasFragment"
-        android:name="es.unex.gps.weathevent.view.ProximasHorasFragment"
+        android:name="es.unex.gps.weathevent.view.weather.ProximasHorasFragment"
         android:label="fragment_proximas_horas"
         tools:layout="@layout/fragment_proximas_horas" />
 
 
     <fragment
         android:id="@+id/proximosDiasFragment"
-        android:name="es.unex.gps.weathevent.view.ProximosDiasFragment"
+        android:name="es.unex.gps.weathevent.view.weather.ProximosDiasFragment"
         android:label="fragment_proximos_dias"
         tools:layout="@layout/fragment_proximos_dias" />
 </navigation>

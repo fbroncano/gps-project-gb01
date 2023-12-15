@@ -11,7 +11,6 @@ import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
@@ -19,6 +18,7 @@ import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import es.unex.gps.weathevent.R
+import es.unex.gps.weathevent.WeathApplication
 import es.unex.gps.weathevent.api.APIHelpers
 import es.unex.gps.weathevent.api.getElTiempoService
 import es.unex.gps.weathevent.data.api.HumedadRelativa
@@ -37,36 +37,34 @@ import es.unex.gps.weathevent.model.Ciudad
 import es.unex.gps.weathevent.model.Event
 import es.unex.gps.weathevent.model.Fecha
 import es.unex.gps.weathevent.model.User
-import es.unex.gps.weathevent.view.EventDetailsActivity
-import es.unex.gps.weathevent.view.login.IniciarSesionViewModel
+import es.unex.gps.weathevent.view.events.EventDetailsActivity
 import es.unex.gps.weathevent.view.PerfilActivity
-import es.unex.gps.weathevent.view.PronosticoActivity
+import es.unex.gps.weathevent.view.buscar.BuscarFragmentDirections
+import es.unex.gps.weathevent.view.weather.PronosticoActivity
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 
-class HomeActivity : AppCompatActivity(), UserParam, OnCiudadClickListener, OnClickEventListener {
+class HomeActivity : AppCompatActivity(), OnCiudadClickListener, OnClickEventListener {
 
-    private val viewModel: IniciarSesionViewModel by viewModels { IniciarSesionViewModel.Factory}
-    private val homeViewModel: HomeViewModel by viewModels()
+    private val viewModel: HomeViewModel by viewModels {
+        HomeViewModel.provideFactory(application as WeathApplication, this)
+    }
+
     private lateinit var binding: ActivityMainBinding
     private lateinit var appBarConfiguration: AppBarConfiguration
-    private lateinit var db : WeathEventDataBase
 
     private val navController by lazy {
         (supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment).navController
     }
 
-    var user: User? = null
     companion object {
         const val USER_INFO = "USER_INFO"
 
-        fun start(
-            context: Context,
-            user: User,
-        ) {
+        fun start(context: Context, user: User) {
             val intent = Intent(context, HomeActivity::class.java).apply {
                 putExtra(USER_INFO, user)
             }
+
             context.startActivity(intent)
         }
     }
@@ -77,13 +75,9 @@ class HomeActivity : AppCompatActivity(), UserParam, OnCiudadClickListener, OnCl
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        db = WeathEventDataBase.getInstance(this)
-
-        homeViewModel.userInSession = intent.getSerializableExtra(USER_INFO) as User
-
         if (intent.hasExtra(USER_INFO)) {
-            user = intent.getSerializableExtra(USER_INFO) as User
-            // viewModel.setUser(user!!)
+            val user = intent.getSerializableExtra(USER_INFO) as User
+            viewModel.setUser(user!!)
             setUpUI()
         }
     }
@@ -174,15 +168,7 @@ class HomeActivity : AppCompatActivity(), UserParam, OnCiudadClickListener, OnCl
     }
 
     override fun onEventDelete(event: Event) {
-        lifecycleScope.launch {
-            db.eventDao().deleteEvent(event)
-        }
-
         Toast.makeText(this, "Borrado el elemento", Toast.LENGTH_SHORT).show()
-    }
-
-    override fun getUserFragment(): User {
-        return user!!
     }
 
     suspend fun sendWeatherData(event: Event): ProximosDias? {
@@ -285,7 +271,6 @@ class HomeActivity : AppCompatActivity(), UserParam, OnCiudadClickListener, OnCl
     override fun onCiudadClick(ciudad: Ciudad) {
         val intent = Intent(this, PronosticoActivity::class.java)
         intent.putExtra(PronosticoActivity.CIUDAD, ciudad)
-        intent.putExtra(PronosticoActivity.USER_INFO, user)
         startActivity(intent)
     }
 }

@@ -1,11 +1,10 @@
-package es.unex.gps.weathevent.view
+package es.unex.gps.weathevent.view.events
 
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.icu.util.Calendar
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
@@ -18,7 +17,6 @@ import es.unex.gps.weathevent.databinding.ActivityAddEventBinding
 import es.unex.gps.weathevent.model.Ciudad
 import es.unex.gps.weathevent.model.Event
 import es.unex.gps.weathevent.model.Fecha
-import es.unex.gps.weathevent.model.User
 import es.unex.gps.weathevent.model.toCiudad
 import kotlinx.coroutines.launch
 import java.text.Normalizer
@@ -35,7 +33,6 @@ class AddEventActivity : AppCompatActivity() {
     private lateinit var errView: TextView
 
     private var municipios: List<Ciudad>? = null
-    private var user: User? = null
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -48,8 +45,6 @@ class AddEventActivity : AppCompatActivity() {
         dateView = binding.dateView
         hourView = binding.hourView
         errView = binding.errorView
-
-        user = intent.getSerializableExtra(USER) as User?
 
         binding.cancelEventBtn.setOnClickListener {
             finish()
@@ -124,7 +119,7 @@ class AddEventActivity : AppCompatActivity() {
                 ciudad = encontrados[0]
                 municipio.editText?.setText(ciudad.name)
             } else if (encontrados.isEmpty()) {
-                errorMsg += "´Revise la ortografía o indique un municipio\n"
+                errorMsg += "Revise la ortografía o indique un municipio\n"
                 valid = false
             } else if (encontrados.size > 2) {
                 val identicos = encontrados.filter {
@@ -147,8 +142,7 @@ class AddEventActivity : AppCompatActivity() {
 
             // Si es válido, se inserta y se retorna a la actividad anterior
             if (valid) {
-                Log.d("userID", user.toString())
-                val event = Event(null, name, ciudad!!.name,fecha, user!!.userId!!, ciudad.ciudadId)
+                val event = Event(null, name, ciudad!!.name,fecha, 1, ciudad.ciudadId)
                 val db = WeathEventDataBase.getInstance(this)
 
                 lifecycleScope.launch {

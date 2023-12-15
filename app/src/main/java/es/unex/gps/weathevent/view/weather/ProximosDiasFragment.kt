@@ -1,4 +1,4 @@
-package es.unex.gps.weathevent.view
+package es.unex.gps.weathevent.view.weather
 
 import android.os.Bundle
 import android.util.Log
@@ -9,7 +9,6 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import es.unex.gps.weathevent.adapter.ProximosDiasAdapter
 import es.unex.gps.weathevent.api.APIError
 import es.unex.gps.weathevent.api.APIHelpers
 import es.unex.gps.weathevent.api.getElTiempoService

@@ -1,28 +1,26 @@
-package es.unex.gps.weathevent.adapter
+package es.unex.gps.weathevent.view.buscar
 
-import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import es.unex.gps.weathevent.R
-import es.unex.gps.weathevent.data.repositories.FavoritosRepository
-import es.unex.gps.weathevent.database.WeathEventDataBase
 import es.unex.gps.weathevent.databinding.SearchItemListBinding
 import es.unex.gps.weathevent.model.Ciudad
-import es.unex.gps.weathevent.model.User
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class BuscarAdapter (
     private var ciudades: List<Ciudad>,
     private val onFavoriteLoad: (ciudad: Ciudad) -> Boolean,
-    private val onFavoriteClick: (ciudad: Ciudad) -> Unit,
+    private val onFavoriteClick: suspend (ciudad: Ciudad) -> Boolean,
     private val onCiudadClick: (ciudad: Ciudad) -> Unit
     ) : RecyclerView.Adapter<BuscarAdapter.CiudadViewHolder>() {
         class CiudadViewHolder(
             private val binding: SearchItemListBinding,
             private val onFavoriteLoad: (ciudad: Ciudad) -> Boolean,
-            private val onFavoriteClick: (ciudad: Ciudad) -> Unit,
+            private val onFavoriteClick: suspend (ciudad: Ciudad) -> Boolean,
             private val onCiudadClick: (ciudad: Ciudad) -> Unit,
         ) : RecyclerView.ViewHolder(binding.root) {
 
@@ -40,10 +38,15 @@ class BuscarAdapter (
                     }
 
                     favoriteIcon.setOnClickListener {
+                        CoroutineScope(Dispatchers.IO).launch {
 
-                        if(!isFavorite) {
-                            favoriteIcon.setImageResource(R.drawable.baseline_favorite_red_24)
-                            onFavoriteClick(ciudad)
+                            var isFavorite = onFavoriteClick(ciudad)
+
+                            if (isFavorite) {
+                                favoriteIcon.setImageResource(R.drawable.baseline_favorite_red_24)
+                            } else {
+                                favoriteIcon.setImageResource(R.drawable.baseline_favorite_border_40)
+                            }
                         }
                     }
 

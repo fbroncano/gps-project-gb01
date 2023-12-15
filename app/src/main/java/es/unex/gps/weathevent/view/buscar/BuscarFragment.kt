@@ -1,4 +1,4 @@
-package es.unex.gps.weathevent.view.home
+package es.unex.gps.weathevent.view.buscar
 
 import android.content.Context
 import android.os.Bundle
@@ -12,11 +12,12 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import es.unex.gps.weathevent.adapter.BuscarAdapter
 import es.unex.gps.weathevent.databinding.FragmentBuscarBinding
 import es.unex.gps.weathevent.interfaces.OnCiudadClickListener
+import es.unex.gps.weathevent.view.home.HomeViewModel
+import kotlinx.coroutines.launch
 
 class BuscarFragment : Fragment() {
 
@@ -25,8 +26,7 @@ class BuscarFragment : Fragment() {
 
     private lateinit var listener: OnCiudadClickListener
 
-    private var _binding: FragmentBuscarBinding? = null
-    private val binding get() = _binding!!
+    private lateinit var binding: FragmentBuscarBinding
     private lateinit var adapter: BuscarAdapter
 
     override fun onAttach(context: Context) {
@@ -44,17 +44,13 @@ class BuscarFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        _binding = FragmentBuscarBinding.inflate(inflater, container, false)
+        binding = FragmentBuscarBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?){
         super.onViewCreated(view, savedInstanceState)
         setUpRecyclerView()
-
-        homeViewModel.user.observe(viewLifecycleOwner) { user ->
-            viewModel.user = user
-        }
 
         // show the spinner when [spinner] is true
         viewModel.spinner.observe(viewLifecycleOwner) { show ->
@@ -76,17 +72,15 @@ class BuscarFragment : Fragment() {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
 
             override fun afterTextChanged(s: Editable?) {
-                viewModel.filterRecyclerView(s.toString())
+                viewModel.query.value = s.toString()
             }
         })
 
         subscribeUi(adapter)
     }
 
-
-
     private fun subscribeUi(adapter: BuscarAdapter) {
-        viewModel.ciudades.observe(viewLifecycleOwner) {
+        viewModel.ciudadesFiltered.observe(viewLifecycleOwner) {
             ciudades -> adapter.updateData(ciudades)
         }
     }
@@ -95,9 +89,18 @@ class BuscarFragment : Fragment() {
         adapter = BuscarAdapter(
             ciudades = emptyList(),
             onFavoriteClick = {
-                Log.d("Ciudad", "${it.name} added to favorites")
-                viewModel.setFavorite(it)
-                Toast.makeText(context, "${it.name} added to favorites", Toast.LENGTH_SHORT).show()
+                val fav = viewModel.changeFavorite(it)
+
+                lifecycleScope.launch {
+                    if (fav) {
+                        Toast.makeText(context, "${it.name} añadido a favoritos", Toast.LENGTH_SHORT)
+                            .show()
+                    } else {
+                        Toast.makeText(context, "${it.name} eliminado de favoritos", Toast.LENGTH_SHORT)
+                    }
+                }
+
+                return@BuscarAdapter fav
             },
             onCiudadClick = {
                 listener.onCiudadClick(it)
@@ -113,10 +116,5 @@ class BuscarFragment : Fragment() {
         }
 
         Log.d("DiscoverFragment", "setUpRecyclerView")
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null // avoid memory leaks
     }
 }

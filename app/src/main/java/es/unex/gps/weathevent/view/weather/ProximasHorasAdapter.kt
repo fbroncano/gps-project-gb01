@@ -1,4 +1,4 @@
-package es.unex.gps.weathevent.view
+package es.unex.gps.weathevent.view.weather
 
 import android.view.LayoutInflater
 import android.view.ViewGroup

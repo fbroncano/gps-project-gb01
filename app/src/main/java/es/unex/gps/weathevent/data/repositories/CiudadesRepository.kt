@@ -15,7 +15,6 @@ class CiudadesRepository private constructor(
 ) {
     val ciudades = ciudadDao.getCiudades()
 
-
     suspend fun tryUpdateRecentCiudadesCache() {
         if (shouldUpdateCiudadesCache())
             fetchCiudades()

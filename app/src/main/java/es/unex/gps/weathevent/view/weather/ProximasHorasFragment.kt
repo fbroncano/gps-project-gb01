@@ -1,4 +1,4 @@
-package es.unex.gps.weathevent.view
+package es.unex.gps.weathevent.view.weather
 
 import android.os.Build
 import android.os.Bundle

@@ -1,10 +1,12 @@
-package es.unex.gps.weathevent.view.home
+package es.unex.gps.weathevent.view.buscar
 
+import android.util.Log
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.map
+import androidx.lifecycle.switchMap
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.CreationExtras
 import es.unex.gps.weathevent.WeathApplication
@@ -20,17 +22,20 @@ import kotlinx.coroutines.launch
 class BuscarViewModel(
     private val ciudadesRepository: CiudadesRepository,
     private val favoritosRepository: FavoritosRepository,
-    private val userRepository: UserRepository
 ): ViewModel() {
 
     val ciudades = ciudadesRepository.ciudades
     val favorites = favoritosRepository.favs
-    var query = ""
+    var query = MutableLiveData("")
 
-    //TODO: Filtrado de la  recyclerView
-    private val _filteredData = MediatorLiveData<List<Ciudad>>()
-    val filteredData: LiveData<List<Ciudad>> get() = _filteredData
-    private val addedSources = mutableListOf<LiveData<*>>()
+    val ciudadesFiltered: LiveData<List<Ciudad>>
+        get() = query.switchMap { query ->
+                ciudades.map { ciudades ->
+                    ciudades.filter { ciudad ->
+                        ciudad.name.contains(query, ignoreCase = true)
+                    }
+                }
+            }
 
     private val _spinner = MutableLiveData<Boolean>()
     val spinner: LiveData<Boolean>
@@ -44,11 +49,17 @@ class BuscarViewModel(
         refresh()
     }
 
-    var user: User? = null
+    suspend fun changeFavorite(ciudad: Ciudad): Boolean {
+        Log.d("Favorite", "${favoritosRepository.checkFavorite(ciudad.ciudadId)}")
 
-    fun setFavorite(ciudad: Ciudad) {
-        viewModelScope.launch {
-            favoritosRepository.markFavorite(user?.userId!!, ciudad.ciudadId)
+        if (favoritosRepository.checkFavorite(ciudad.ciudadId)) {
+            Log.d("DelFavorite", "${ciudad.ciudadId} se ha eliminado a favoritos")
+            favoritosRepository.desmarkFavorite(ciudad.ciudadId)
+            return false
+        } else {
+            Log.d("AddFavorite", "${ciudad.ciudadId} se ha añadido a favoritos")
+            favoritosRepository.markFavorite(ciudad.ciudadId)
+            return true
         }
     }
 
@@ -57,7 +68,9 @@ class BuscarViewModel(
     }
 
     private fun refresh() {
-        launchDataLoad { ciudadesRepository.tryUpdateRecentCiudadesCache() }
+        launchDataLoad {
+            ciudadesRepository.tryUpdateRecentCiudadesCache()
+        }
     }
 
     fun onToastShown() {
@@ -77,19 +90,6 @@ class BuscarViewModel(
         }
     }
 
-    //TODO
-    fun filterRecyclerView(text: String) {
-
-        if (ciudades !in addedSources) {
-            _filteredData.addSource(ciudades) { ciudadesList ->
-                _filteredData.value = ciudadesList.filter { it.name.contains(text, ignoreCase = true) }
-            }
-
-            // Agrega la fuente a la lista
-            addedSources.add(ciudades)
-        }
-    }
-
     companion object {
 
         val Factory: ViewModelProvider.Factory = object : ViewModelProvider.Factory {
@@ -103,8 +103,7 @@ class BuscarViewModel(
 
                 return BuscarViewModel(
                     (application as WeathApplication).appContainer.ciudadesRepository,
-                    application.appContainer.favoritosRepository,
-                    application.appContainer.userRepository
+                    application.appContainer.favoritosRepository
                 ) as T
             }
         }
