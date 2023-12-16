@@ -9,6 +9,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.switchMap
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.CreationExtras
 import es.unex.gps.weathevent.R
@@ -26,6 +27,7 @@ import es.unex.gps.weathevent.model.Ciudad
 import es.unex.gps.weathevent.model.Fecha
 import es.unex.gps.weathevent.model.ProximosDiasTiempo
 import es.unex.gps.weathevent.model.TiempoPorHora
+import es.unex.gps.weathevent.model.User
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 
@@ -34,7 +36,8 @@ class PronosticoViewModel(
     private val favoritosRepository: FavoritosRepository,
     private val pronosticoRepository: PronosticoRepository
 ): ViewModel()  {
-    var userId: Long? = 1
+
+    val userId = pronosticoRepository.user.value?.userId
 
     val _ciudad = MutableLiveData<Ciudad?>()
     val ciudad: LiveData<Ciudad?>
@@ -49,6 +52,7 @@ class PronosticoViewModel(
     private val _dias = MutableLiveData<MutableList<ProximosDiasTiempo>>()
     val dias: LiveData<MutableList<ProximosDiasTiempo>>
         get() = _dias
+
     @RequiresApi(Build.VERSION_CODES.O)
     fun setUiViews() {
         viewModelScope.launch {
@@ -71,7 +75,7 @@ class PronosticoViewModel(
             Log.d("","${userId} ${ciudad.value?.name}")
             val isFavorite = favoritosRepository.checkFavorite(ciudad.value!!.ciudadId)
 
-            if (isFavorite) {
+            if (!isFavorite) {
                 binding.imageFav.setImageResource(R.drawable.baseline_favorite_border_40)
             } else {
                 binding.imageFav.setImageResource(R.drawable.baseline_favorite_40_red)
@@ -81,7 +85,7 @@ class PronosticoViewModel(
                 viewModelScope.launch {
                     val isFavorite = favoritosRepository.checkFavorite(ciudad.value!!.ciudadId)
 
-                    if (isFavorite) {
+                    if (!isFavorite) {
                         favoritosRepository.markFavorite(ciudad.value!!.ciudadId)
                         binding.imageFav.setImageResource(R.drawable.baseline_favorite_40_red)
                         /*Toast.makeText(
