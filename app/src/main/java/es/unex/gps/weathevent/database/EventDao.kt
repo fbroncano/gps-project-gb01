@@ -23,4 +23,7 @@ interface EventDao {
 
     @Update
     suspend fun updateEvent (event: Event)
+
+    @Query("SELECT * FROM event WHERE id = :eventId")
+    fun getEvent(eventId: Long): LiveData<Event>
 }

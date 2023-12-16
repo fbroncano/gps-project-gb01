@@ -21,20 +21,7 @@ class ListEventFragment : Fragment() {
 
     private lateinit var binding: FragmentListEventBinding
     private lateinit var adapter: EventAdapter
-
-    private lateinit var listener: OnClickEventListener
-
     private val viewModel: ListEventViewModel by viewModels { ListEventViewModel.Factory  }
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-
-        if (context is OnClickEventListener) {
-            listener = context
-        } else {
-            throw RuntimeException(context.toString() + " must implement OnEventClickListener")
-        }
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -60,10 +47,13 @@ class ListEventFragment : Fragment() {
         adapter = EventAdapter(
             emptyList(),
             onClick = {
-                listener.onEventClick(it)
+                val intent = Intent(requireContext(), EventDetailsActivity::class.java).apply {
+                    putExtra(EventDetailsActivity.EVENT, it.id)
+                }
+                startActivity(intent)
             },
             onClickDelete = {
-                listener.onEventDelete(it)
+                viewModel.deleteEvent(it)
             }
         )
 

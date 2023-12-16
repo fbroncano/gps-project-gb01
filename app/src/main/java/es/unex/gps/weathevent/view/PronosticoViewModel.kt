@@ -54,7 +54,7 @@ class PronosticoViewModel(
         viewModelScope.launch {
             if (ciudad.value?.ciudadId != null) {
 
-                val response = pronosticoRepository.getMunicipioResponse(ciudad.value!!)
+                val response = pronosticoRepository.getMunicipioResponse(ciudad.value!!.ciudadId)
 
                 binding.municipioView.text = ciudad.value?.name
                 binding.descripcionView.text = pronosticoRepository.getStateSky(response)
@@ -108,7 +108,7 @@ class PronosticoViewModel(
     suspend fun getProximasHoras(context: Context, adapter: ProximasHorasAdapter){
                 try {
                     Log.d("","${ciudad.value?.name}")
-                    val response = pronosticoRepository.getMunicipioResponse(ciudad.value!!)
+                    val response = pronosticoRepository.getMunicipioResponse(ciudad.value!!.ciudadId)
 
                     val horasHoy = response.pronostico?.hoy?.viento?.map {
                         it.attributes?.periodo
@@ -160,7 +160,7 @@ class PronosticoViewModel(
     suspend fun getProximosDias(context: Context, adapter: ProximosDiasAdapter){
             if (_dias.value!!.isEmpty()) {
                 try {
-                    val response = pronosticoRepository.getMunicipioResponse(ciudad.value!!)
+                    val response = pronosticoRepository.getMunicipioResponse(ciudad.value!!.ciudadId)
                     response.obtainProximosDias()
 
                     for (obj in response.proximosDias) {

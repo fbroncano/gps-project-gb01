@@ -21,4 +21,7 @@ interface CiudadDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(ciudades : List<Ciudad>)
+
+    @Query("SELECT * FROM Ciudad WHERE UPPER(name) = UPPER(:ciudad)")
+    suspend fun getCiudad(ciudad: String): Ciudad
 }

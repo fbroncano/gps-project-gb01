@@ -11,9 +11,9 @@ class PronosticoRepository(context: Context?) {
     val applicationContext = context!!.applicationContext
 
 
-    suspend fun getMunicipioResponse(ciudad: Ciudad): MunicipioResponse {
-        val codProv = APIHelpers.getCodProv(ciudad.ciudadId)
-        val ciudadId = APIHelpers.getCiudadFormat(ciudad.ciudadId)
+    suspend fun getMunicipioResponse(ciudadId: Long): MunicipioResponse {
+        val codProv = APIHelpers.getCodProv(ciudadId)
+        val ciudadId = APIHelpers.getCiudadFormat(ciudadId)
         return getElTiempoService().getMunicipio(codProv, ciudadId)
     }
 

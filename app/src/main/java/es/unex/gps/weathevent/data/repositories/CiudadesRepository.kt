@@ -1,7 +1,5 @@
 package es.unex.gps.weathevent.data.repositories
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MediatorLiveData
 import es.unex.gps.weathevent.api.APIError
 import es.unex.gps.weathevent.api.ElTiempoAPI
 import es.unex.gps.weathevent.data.api.Municipio
@@ -22,6 +20,10 @@ class CiudadesRepository private constructor(
 
     suspend fun getCiudad(ciudadId: Long) : Ciudad {
         return ciudadDao.getCiudad(ciudadId)
+    }
+
+    suspend fun getCiudad(ciudadName: String): Ciudad {
+        return ciudadDao.getCiudad(ciudadName)
     }
 
     private suspend fun fetchCiudades() {

@@ -27,6 +27,14 @@ class EventsRepository private constructor(
         eventDao.insertEvent(event)
     }
 
+    suspend fun deleteEvent(event: Event) {
+        eventDao.deleteEvent(event)
+    }
+
+    fun getEvent(eventId: Long): LiveData<Event> {
+        return eventDao.getEvent(eventId)
+    }
+
     companion object {
         @Volatile
         private var INSTANCE: EventsRepository? = null

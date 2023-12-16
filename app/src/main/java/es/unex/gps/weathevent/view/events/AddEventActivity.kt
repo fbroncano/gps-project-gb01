@@ -9,9 +9,11 @@ import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import com.google.android.material.textfield.TextInputLayout
 import es.unex.gps.weathevent.databinding.ActivityAddEventBinding
 import es.unex.gps.weathevent.model.Fecha
+import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 
 class AddEventActivity : AppCompatActivity() {
@@ -85,43 +87,46 @@ class AddEventActivity : AppCompatActivity() {
     }
 
     private fun saveEvent() {
+        lifecycleScope.launch {
+            var errorMsg = ""
+            var error: String?
 
-        var errorMsg = ""
-        var error: String?
+            var valid = true
+            val name = name.editText?.text.toString()
+            val municipioStr = municipio.editText?.text.toString().trim()
 
-        var valid = true
-        val name = name.editText?.text.toString()
-        val municipioStr = municipio.editText?.text.toString().trim()
-
-        // Comprobar que el nombre del evento sea correcto
-        error = viewModel.validateName(name)
-        if (error != null) {
-            errorMsg += "Se debe indicar un nombre de al menos tres caracteres\n"
-            valid = false
-        }
-
-        // Comprobar que el municipio sea correcto
-        error = viewModel.filterMunicipio(municipioStr)
-        if (error != null) {
-            errorMsg += error
-            valid = false
-        }
-
-        // Se comprueba que la fecha sea correcta
-        error = viewModel.validateFecha(fecha)
-        if (error != null) {
-            errorMsg += error
-            valid = false
-        }
-
-        // Si es válido, se inserta y se retorna a la actividad anterior
-        if (valid) {
-            if (!viewModel.insertEvent(name, fecha)) {
-                errView.text = "No se ha podido insertar el evento."
+            // Comprobar que el nombre del evento sea correcto
+            error = viewModel.validateName(name)
+            if (error != null) {
+                errorMsg += "Se debe indicar un nombre de al menos tres caracteres\n"
+                valid = false
             }
-        } else {
-            // Se muestran los errores
-            errView.text = errorMsg
+
+            // Comprobar que el municipio sea correcto
+            error = viewModel.filterMunicipio(municipioStr)
+            if (error != null) {
+                errorMsg += error
+                valid = false
+            }
+
+            // Se comprueba que la fecha sea correcta
+            error = viewModel.validateFecha(fecha)
+            if (error != null) {
+                errorMsg += error
+                valid = false
+            }
+
+            // Si es válido, se inserta y se retorna a la actividad anterior
+            if (valid) {
+                if (!viewModel.insertEvent(name, fecha)) {
+                    errView.text = "No se ha podido insertar el evento."
+                } else {
+                    finish()
+                }
+            } else {
+                // Se muestran los errores
+                errView.text = errorMsg
+            }
         }
     }
 }

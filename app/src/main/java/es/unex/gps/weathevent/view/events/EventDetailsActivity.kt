@@ -1,9 +1,13 @@
 package es.unex.gps.weathevent.view.events
 
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import androidx.activity.viewModels
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import com.google.gson.Gson
 import es.unex.gps.weathevent.api.APIHelpers
 import es.unex.gps.weathevent.data.api.ProximosDias
@@ -11,43 +15,51 @@ import es.unex.gps.weathevent.data.api.ProximosDiasArray
 import es.unex.gps.weathevent.data.api.ProximosDiasSingle
 import es.unex.gps.weathevent.databinding.ActivityEventDetailsBinding
 import es.unex.gps.weathevent.model.Event
+import kotlinx.coroutines.launch
 
 class EventDetailsActivity : AppCompatActivity() {
 
     private lateinit var binding : ActivityEventDetailsBinding
-    private var event : Event? = null
-    private var proximoDia : ProximosDias? = null
-    private var pronostico : Boolean = false
+    private val viewModel: EventDetailsViewModel by viewModels { EventDetailsViewModel.Factory }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityEventDetailsBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        event = intent.getSerializableExtra(EVENT) as? Event
-        proximoDia = intent.getSerializableExtra(PREDICCION) as? ProximosDias
-        pronostico = intent.getBooleanExtra(PRONOSTICO, false)
-
-        Log.d("APIResult", proximoDia.toString())
+        viewModel.eventId.value = intent.getLongExtra(EVENT, -1L)
+        viewModel.eventLiveData.observe(this) {
+            loadEvent(it)
+        }
 
         binding.exportButton.setOnClickListener {
             exportEvent()
         }
-
-        updateUI()
     }
 
-    private fun updateUI() {
-        binding.ubicationText.text = event?.location
-        binding.dateView.text = event?.date?.getFormatDay()
-        binding.eventDataView.text = "${event?.date?.getFormatHour()} - ${event?.name}"
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun loadEvent(event: Event) {
+        lifecycleScope.launch {
+            Log.d("EventDetail", viewModel.eventId.value.toString() + " " + event.toString())
 
-        if (pronostico && proximoDia is ProximosDiasSingle) {
-            setPronostico(proximoDia as ProximosDiasSingle)
-        } else if (proximoDia is ProximosDiasSingle) {
-            setPronostico(proximoDia as ProximosDiasSingle)
-        } else if (proximoDia is ProximosDiasArray) {
-            setProximoDia(proximoDia as ProximosDiasArray)
+            viewModel.event = event
+            viewModel.loadWeatherEvent(event)
+            updateUI(event)
+        }
+    }
+
+    private fun updateUI(event: Event) {
+        binding.ubicationText.text = event.location
+        binding.dateView.text = event.date?.getFormatDay()
+        binding.eventDataView.text = "${event.date?.getFormatHour()} - ${event.name}"
+
+        if (viewModel.pronostico && viewModel.proximoDia is ProximosDiasSingle) {
+            setPronostico(viewModel.proximoDia as ProximosDiasSingle)
+        } else if (viewModel.proximoDia is ProximosDiasSingle) {
+            setPronostico(viewModel.proximoDia as ProximosDiasSingle)
+        } else if (viewModel.proximoDia is ProximosDiasArray) {
+            setProximoDia(viewModel.proximoDia as ProximosDiasArray)
         } else {
             binding.temperatureView.text = "No hay datos disponibles"
         }
@@ -74,7 +86,7 @@ class EventDetailsActivity : AppCompatActivity() {
 
     private fun exportEvent() {
         val gson = Gson()
-        val json = gson.toJson(event)
+        val json = gson.toJson(viewModel.event)
 
         // Crear un Intent para compartir
         val sendIntent: Intent = Intent().apply {
@@ -90,7 +102,5 @@ class EventDetailsActivity : AppCompatActivity() {
 
     companion object {
         val EVENT = "Event"
-        val PREDICCION = "Prediccion"
-        val PRONOSTICO = "Pronostico"
     }
 }

@@ -1,9 +1,8 @@
 package es.unex.gps.weathevent.view.events
 
-import android.util.Log
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.map
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.CreationExtras
 import es.unex.gps.weathevent.WeathApplication
@@ -13,7 +12,6 @@ import es.unex.gps.weathevent.model.Ciudad
 import es.unex.gps.weathevent.model.Event
 import es.unex.gps.weathevent.model.Fecha
 import kotlinx.coroutines.launch
-import java.text.Normalizer
 
 
 class AddEventViewModel (
@@ -21,11 +19,7 @@ class AddEventViewModel (
     private val eventsRepository: EventsRepository
 ): ViewModel() {
     val ciudades = ciudadesRepository.ciudades
-    var ciudad: Ciudad? = null
-    private fun normalize(string: String): String {
-        var str = Normalizer.normalize(string, Normalizer.Form.NFD)
-        return str.replace("[^\\p{ASCII}]", "")
-    }
+    var ciudad = MutableLiveData<Ciudad>(null)
 
     fun validateName(name: String): String? {
         return if (name.length < 3) {
@@ -39,40 +33,19 @@ class AddEventViewModel (
         } else null
     }
 
-    fun filterMunicipio(municipioName: String): String? {
-        var errorMsg: String? = null
-        var municipio = normalize(municipioName)
+    suspend fun filterMunicipio(municipio: String): String? {
+        ciudad.value = ciudadesRepository.getCiudad(municipio)
 
-        val encontrados = ciudades.map {
-            it.filter {
-                normalize(it.name).contains(municipio, ignoreCase = true)
-            }
-        }.value
-
-        // Filtramos si el municipio se ha encontrado
-        Log.d("Ciudades", ciudadesRepository.toString())
-        if (encontrados?.size == 1) {
-            ciudad = encontrados[0]
-        } else if (encontrados?.isEmpty() == true) {
-            errorMsg = "Revise la ortografía o indique un municipio\n"
-        } else if (encontrados?.size?: 0 > 2) {
-            val identicos = encontrados?.filter {
-                normalize(it.name).equals(municipio, ignoreCase = true)
-            }
-
-            if (identicos?.size == 1) {
-                ciudad = encontrados[0]
-            } else {
-                errorMsg = "Debe concretar más el nombre del municipio\n"
-            }
+        return if (ciudad.value != null) {
+            null
+        } else {
+            "Revise la ortografía del municipio\n"
         }
-
-        return errorMsg
     }
 
     fun insertEvent(name: String, fecha: Fecha): Boolean {
-        return if (ciudad != null) {
-            var event = Event(null, name, ciudad!!.name, fecha, -1, ciudad!!.ciudadId)
+        return if (ciudad.value != null) {
+            var event = Event(null, name, ciudad.value!!.name, fecha, -1, ciudad.value!!.ciudadId)
             viewModelScope.launch {
                 eventsRepository.addEvent(event)
             }
