@@ -6,20 +6,12 @@ import android.icu.util.Calendar
 import android.os.Build
 import android.os.Bundle
 import android.widget.TextView
-import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.lifecycleScope
 import com.google.android.material.textfield.TextInputLayout
-import es.unex.gps.weathevent.api.APIHelpers
-import es.unex.gps.weathevent.database.WeathEventDataBase
 import es.unex.gps.weathevent.databinding.ActivityAddEventBinding
-import es.unex.gps.weathevent.model.Ciudad
-import es.unex.gps.weathevent.model.Event
 import es.unex.gps.weathevent.model.Fecha
-import es.unex.gps.weathevent.model.toCiudad
-import kotlinx.coroutines.launch
-import java.text.Normalizer
 import java.time.LocalDateTime
 
 class AddEventActivity : AppCompatActivity() {
@@ -32,7 +24,7 @@ class AddEventActivity : AppCompatActivity() {
     private lateinit var hourView: TextInputLayout
     private lateinit var errView: TextView
 
-    private var municipios: List<Ciudad>? = null
+    private val viewModel: AddEventViewModel by viewModels { AddEventViewModel.Factory }
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -66,7 +58,9 @@ class AddEventActivity : AppCompatActivity() {
                     fecha.dia = dayOfMonth
                     fecha.mes = monthOfYear + 1
                     fecha.ano = chooseYear
-                    dateView.editText?.setText("${fecha.dia}/${fecha.mes}/${fecha.ano}")
+                    val diaStr = if (dayOfMonth < 10) "0$dayOfMonth" else dayOfMonth
+                    val mesStr = if (fecha.mes < 10) "0${fecha.mes}" else fecha.mes
+                    dateView.editText?.setText("${diaStr}/${mesStr}/${fecha.ano}")
                 }, year, month, day
             )
 
@@ -80,86 +74,54 @@ class AddEventActivity : AppCompatActivity() {
                 {_, hour, minutes ->
                     fecha.hora = hour
                     fecha.mins = minutes
-                    hourView.editText?.setText("${fecha.hora}:${fecha.mins}")
+                    val horaStr = if (hour < 10) "0$hour" else hour
+                    val minsStr = if (minutes < 10) "0$minutes" else minutes
+                    hourView.editText?.setText("${horaStr}:${minsStr}")
                 }, time.hour, time.minute, true
             )
 
             hourPickerDialog.show()
         }
-
-        lifecycleScope.launch {
-            municipios = APIHelpers().fetchMunicipios().map { it.toCiudad() }
-        }
     }
 
-    fun saveEvent() {
-        val normalize: (String) -> String = {
-            var str = Normalizer.normalize(it, Normalizer.Form.NFD)
-            str.replace("[^\\p{ASCII}]", "")
+    private fun saveEvent() {
+
+        var errorMsg = ""
+        var error: String?
+
+        var valid = true
+        val name = name.editText?.text.toString()
+        val municipioStr = municipio.editText?.text.toString().trim()
+
+        // Comprobar que el nombre del evento sea correcto
+        error = viewModel.validateName(name)
+        if (error != null) {
+            errorMsg += "Se debe indicar un nombre de al menos tres caracteres\n"
+            valid = false
         }
 
-        var errorMsg : String = ""
-        var ciudad : Ciudad? = null
-        var valid = true
-        var name = name.editText?.text.toString()
-        var municipioStr = normalize(municipio.editText?.text.toString().trim())
+        // Comprobar que el municipio sea correcto
+        error = viewModel.filterMunicipio(municipioStr)
+        if (error != null) {
+            errorMsg += error
+            valid = false
+        }
 
-        if (municipios != null) {
-            if (name.length < 3) {
-                errorMsg += "Se debe indicar un nombre de al menos tres caracteres\n"
-                valid = false
-            }
+        // Se comprueba que la fecha sea correcta
+        error = viewModel.validateFecha(fecha)
+        if (error != null) {
+            errorMsg += error
+            valid = false
+        }
 
-            val encontrados = municipios!!.filter {
-                normalize(it.name).contains(municipioStr, ignoreCase = true)
-            }
-
-            // Filtramos si el municipio se ha encontrado
-            if (encontrados.size == 1) {
-                ciudad = encontrados[0]
-                municipio.editText?.setText(ciudad.name)
-            } else if (encontrados.isEmpty()) {
-                errorMsg += "Revise la ortografía o indique un municipio\n"
-                valid = false
-            } else if (encontrados.size > 2) {
-                val identicos = encontrados.filter {
-                    normalize(it.name).equals(municipioStr, ignoreCase = true)
-                }
-                if (identicos.size == 1) {
-                    ciudad = encontrados[0]
-                    municipio.editText?.setText(ciudad.name)
-                } else {
-                    errorMsg += "Debe concretar más el nombre del municipio\n"
-                    valid = false
-                }
-            }
-
-            // Se comprueba que la fecha sea distinto de cero
-            if (!fecha.isValid()) {
-                valid = false
-                errorMsg += "Debe introducir una fecha y una hora\n"
-            }
-
-            // Si es válido, se inserta y se retorna a la actividad anterior
-            if (valid) {
-                val event = Event(null, name, ciudad!!.name,fecha, 1, ciudad.ciudadId)
-                val db = WeathEventDataBase.getInstance(this)
-
-                lifecycleScope.launch {
-                    db.eventDao().insertEvent(event)
-
-                    finish()
-                }
-            } else {
-                // Se muestran los errores
-                errView.text = errorMsg
+        // Si es válido, se inserta y se retorna a la actividad anterior
+        if (valid) {
+            if (!viewModel.insertEvent(name, fecha)) {
+                errView.text = "No se ha podido insertar el evento."
             }
         } else {
-            Toast.makeText(this, "Cargando los datos de municipio. Espere un momento", Toast.LENGTH_LONG).show()
+            // Se muestran los errores
+            errView.text = errorMsg
         }
-    }
-
-    companion object {
-        val USER = "user"
     }
 }

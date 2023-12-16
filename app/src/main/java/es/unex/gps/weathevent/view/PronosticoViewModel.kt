@@ -1,26 +1,22 @@
 package es.unex.gps.weathevent.view
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Build
 import android.util.Log
 import android.widget.Toast
 import androidx.annotation.RequiresApi
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.CreationExtras
 import es.unex.gps.weathevent.R
 import es.unex.gps.weathevent.WeathApplication
-import es.unex.gps.weathevent.adapter.ProximosDiasAdapter
+import es.unex.gps.weathevent.view.weather.ProximasHorasAdapter
+import es.unex.gps.weathevent.view.weather.ProximosDiasAdapter
 import es.unex.gps.weathevent.api.APIError
 import es.unex.gps.weathevent.api.APIHelpers
-import es.unex.gps.weathevent.api.getElTiempoService
 import es.unex.gps.weathevent.data.api.ProximosDiasArray
 import es.unex.gps.weathevent.data.api.ProximosDiasSingle
 import es.unex.gps.weathevent.data.repositories.FavoritosRepository
@@ -30,7 +26,6 @@ import es.unex.gps.weathevent.model.Ciudad
 import es.unex.gps.weathevent.model.Fecha
 import es.unex.gps.weathevent.model.ProximosDiasTiempo
 import es.unex.gps.weathevent.model.TiempoPorHora
-import es.unex.gps.weathevent.model.User
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 
@@ -74,7 +69,7 @@ class PronosticoViewModel(
 
         viewModelScope.launch {
             Log.d("","${userId} ${ciudad.value?.name}")
-            val isFavorite = favoritosRepository.checkFavorite(userId!!, ciudad.value!!.ciudadId)
+            val isFavorite = favoritosRepository.checkFavorite(ciudad.value!!.ciudadId)
 
             if (isFavorite) {
                 binding.imageFav.setImageResource(R.drawable.baseline_favorite_border_40)
@@ -84,10 +79,10 @@ class PronosticoViewModel(
 
             binding.imageFav.setOnClickListener {
                 viewModelScope.launch {
-                    val isFavorite = favoritosRepository.checkFavorite(userId!!, ciudad.value!!.ciudadId)
+                    val isFavorite = favoritosRepository.checkFavorite(ciudad.value!!.ciudadId)
 
                     if (isFavorite) {
-                        favoritosRepository.markFavorite(userId!!, ciudad.value!!.ciudadId)
+                        favoritosRepository.markFavorite(ciudad.value!!.ciudadId)
                         binding.imageFav.setImageResource(R.drawable.baseline_favorite_40_red)
                         /*Toast.makeText(
                             this,
@@ -95,7 +90,7 @@ class PronosticoViewModel(
                             Toast.LENGTH_SHORT
                         ).show()*/
                     } else {
-                        favoritosRepository.desmarkFavorite(userId!!, ciudad.value!!.ciudadId)
+                        favoritosRepository.desmarkFavorite(ciudad.value!!.ciudadId)
                         binding.imageFav.setImageResource(R.drawable.baseline_favorite_border_40)
                         /*
                         Toast.makeText(

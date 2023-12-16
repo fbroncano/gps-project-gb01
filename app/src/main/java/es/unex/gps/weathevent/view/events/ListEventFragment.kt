@@ -22,9 +22,7 @@ class ListEventFragment : Fragment() {
     private lateinit var binding: FragmentListEventBinding
     private lateinit var adapter: EventAdapter
 
-    private lateinit var userParam: UserParam
     private lateinit var listener: OnClickEventListener
-    private var events : List<Event> = emptyList()
 
     private val viewModel: ListEventViewModel by viewModels { ListEventViewModel.Factory  }
 
@@ -59,7 +57,8 @@ class ListEventFragment : Fragment() {
     }
 
     private fun setUpRecyclerView() {
-        adapter = EventAdapter(events,
+        adapter = EventAdapter(
+            emptyList(),
             onClick = {
                 listener.onEventClick(it)
             },

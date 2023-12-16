@@ -20,6 +20,7 @@ import es.unex.gps.weathevent.interfaces.CiudadParam
 import es.unex.gps.weathevent.model.Ciudad
 import es.unex.gps.weathevent.model.Fecha
 import es.unex.gps.weathevent.model.ProximosDiasTiempo
+import es.unex.gps.weathevent.view.PronosticoViewModel
 import kotlinx.coroutines.launch
 class ProximosDiasFragment : Fragment() {
 
@@ -27,7 +28,7 @@ class ProximosDiasFragment : Fragment() {
     private val binding get() = _binding!!
     private lateinit var adapter: ProximosDiasAdapter
 
-    private val viewModel: PronosticoViewModel by activityViewModels {PronosticoViewModel.Factory}
+    private val viewModel: PronosticoViewModel by activityViewModels { PronosticoViewModel.Factory }
 
 
     override fun onCreate(savedInstanceState: Bundle?) {

@@ -45,7 +45,7 @@ class BuscarViewModel(
     val toast: LiveData<String?>
         get() = _toast
 
-    init{
+    init {
         refresh()
     }
 

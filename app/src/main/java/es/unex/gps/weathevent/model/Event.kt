@@ -12,6 +12,6 @@ data class Event(
     val name : String,
     val location : String,
     @Embedded val date : Fecha,
-    val userid : Long,
+    var userid : Long,
     val locationId : Long
 ) : Serializable

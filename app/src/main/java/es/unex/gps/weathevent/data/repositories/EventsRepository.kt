@@ -14,14 +14,16 @@ class EventsRepository private constructor(
     val user = MutableLiveData<User>(null)
 
     val events: LiveData<List<Event>> =
-        user.switchMap{
-            eventDao.searchByUser(it.userId!!)
+        user.switchMap {
+            eventDao.searchByUser(user.value?.userId!!)
         }
+
     fun setUser(user: User) {
         this.user.value = user
     }
 
     suspend fun addEvent(event: Event) {
+        event.userid = user.value!!.userId!!
         eventDao.insertEvent(event)
     }
 
