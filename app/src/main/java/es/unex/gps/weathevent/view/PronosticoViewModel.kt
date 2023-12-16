@@ -9,7 +9,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.switchMap
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.CreationExtras
 import es.unex.gps.weathevent.R
@@ -27,7 +26,6 @@ import es.unex.gps.weathevent.model.Ciudad
 import es.unex.gps.weathevent.model.Fecha
 import es.unex.gps.weathevent.model.ProximosDiasTiempo
 import es.unex.gps.weathevent.model.TiempoPorHora
-import es.unex.gps.weathevent.model.User
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 
@@ -36,8 +34,6 @@ class PronosticoViewModel(
     private val favoritosRepository: FavoritosRepository,
     private val pronosticoRepository: PronosticoRepository
 ): ViewModel()  {
-
-    val userId = pronosticoRepository.user.value?.userId
 
     val _ciudad = MutableLiveData<Ciudad?>()
     val ciudad: LiveData<Ciudad?>
@@ -72,7 +68,6 @@ class PronosticoViewModel(
     fun ciudadBinding() {
 
         viewModelScope.launch {
-            Log.d("","${userId} ${ciudad.value?.name}")
             val isFavorite = favoritosRepository.checkFavorite(ciudad.value!!.ciudadId)
 
             if (!isFavorite) {

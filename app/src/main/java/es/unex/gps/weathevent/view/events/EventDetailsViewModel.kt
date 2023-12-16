@@ -8,10 +8,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.switchMap
-import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.CreationExtras
 import es.unex.gps.weathevent.WeathApplication
-import es.unex.gps.weathevent.api.APIHelpers
 import es.unex.gps.weathevent.api.getElTiempoService
 import es.unex.gps.weathevent.data.api.HumedadRelativa
 import es.unex.gps.weathevent.data.api.ProximosDias
@@ -24,7 +22,6 @@ import es.unex.gps.weathevent.data.repositories.EventsRepository
 import es.unex.gps.weathevent.data.repositories.PronosticoRepository
 import es.unex.gps.weathevent.model.Event
 import es.unex.gps.weathevent.model.Fecha
-import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 
 class EventDetailsViewModel (
@@ -62,7 +59,7 @@ class EventDetailsViewModel (
                 it.attributes?.periodo
             }
 
-            val strHora: String? =
+            val strHora: String =
                 if (event.date.hora < 10) "0${event.date.hora}" else event.date.hora.toString()
 
             if (horasManana?.indexOf(strHora) != -1) {
@@ -96,7 +93,7 @@ class EventDetailsViewModel (
         for (obj in municipioResponse.proximosDias) {
             if (obj is ProximosDiasArray) {
                 val dates = obj.attributes?.fecha?.split("-")
-                val fecha = Fecha(dates?.get(2)?.toInt()!!, dates?.get(1)?.toInt()!!, dates?.get(0)?.toInt()!!, 0, 0)
+                val fecha = Fecha(dates?.get(2)?.toInt()!!, dates[1].toInt(), dates[0].toInt(), 0, 0)
 
                 Log.d("DatesCast", "" + fecha.getAbsoluteDay() + "  " + event.date.getAbsoluteDay())
                 if (fecha.getAbsoluteDay() == event.date.getAbsoluteDay()) {
@@ -104,7 +101,7 @@ class EventDetailsViewModel (
                 }
             } else if (obj is ProximosDiasSingle) {
                 val dates = obj.attributes?.fecha?.split("-")
-                val fecha = Fecha(dates?.get(2)?.toInt()!!, dates?.get(1)?.toInt()!!, dates?.get(0)?.toInt()!!, 0, 0)
+                val fecha = Fecha(dates?.get(2)?.toInt()!!, dates[1].toInt(), dates[0].toInt(), 0, 0)
 
                 if (fecha.getAbsoluteDay() == event.date.getAbsoluteDay()) {
                     proximoDia = obj
@@ -119,7 +116,7 @@ class EventDetailsViewModel (
     private suspend fun sendPronosticoData(event: Event) : ProximosDias? {
         var proximo: ProximosDias? = null
         var locationId = event.locationId.toString()
-        var time = LocalDateTime.now()
+        val time = LocalDateTime.now()
         val date = Fecha(time.dayOfMonth, time.monthValue, time.year, time.hour, time.minute).getAbsoluteDay()
 
         if (locationId.length == 4) locationId = "0$locationId"
@@ -136,9 +133,9 @@ class EventDetailsViewModel (
         }
 
         if (date == event.date.getAbsoluteDay()) {
-            val strHora : String? = if (event.date.hora < 10) "0${event.date.hora}" else event.date.hora.toString()
+            val strHora : String = if (event.date.hora < 10) "0${event.date.hora}" else event.date.hora.toString()
             val index = horasHoy?.indexOf(strHora)
-            val hoy = municipioResponse?.pronostico?.hoy
+            val hoy = municipioResponse.pronostico?.hoy
 
             if (index != -1) {
                 proximo = ProximosDiasSingle(
@@ -155,9 +152,9 @@ class EventDetailsViewModel (
             }
 
         } else if (date + 1 == event.date.getAbsoluteDay()) {
-            val strHora : String? = if (event.date.hora < 10) "0${event.date.hora}" else event.date.hora.toString()
+            val strHora : String = if (event.date.hora < 10) "0${event.date.hora}" else event.date.hora.toString()
             val index = horasManana?.indexOf(strHora)
-            val manana = municipioResponse?.pronostico?.manana
+            val manana = municipioResponse.pronostico?.manana
 
             Log.d("INDICES", index.toString())
             if (index != -1) {

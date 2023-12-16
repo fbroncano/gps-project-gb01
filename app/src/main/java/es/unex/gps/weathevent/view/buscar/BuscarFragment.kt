@@ -1,6 +1,6 @@
 package es.unex.gps.weathevent.view.buscar
 
-import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -10,39 +10,25 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import es.unex.gps.weathevent.databinding.FragmentBuscarBinding
-import es.unex.gps.weathevent.interfaces.OnCiudadClickListener
-import es.unex.gps.weathevent.view.home.HomeViewModel
+import es.unex.gps.weathevent.view.weather.PronosticoActivity
 import kotlinx.coroutines.launch
 
 class BuscarFragment : Fragment() {
 
     private val viewModel: BuscarViewModel by viewModels { BuscarViewModel.Factory }
-    private val homeViewModel: HomeViewModel by activityViewModels()
-
-    private lateinit var listener: OnCiudadClickListener
 
     private lateinit var binding: FragmentBuscarBinding
     private lateinit var adapter: BuscarAdapter
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-
-        if (context is OnCiudadClickListener) {
-            listener = context
-        } else {
-            throw RuntimeException(context.toString() + " must implement OnCiudadClickListener")
-        }
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         // Inflate the layout for this fragment
         binding = FragmentBuscarBinding.inflate(inflater, container, false)
         return binding.root
@@ -79,6 +65,11 @@ class BuscarFragment : Fragment() {
         subscribeUi(adapter)
     }
 
+    override fun onResume() {
+        super.onResume()
+        viewModel.query.value = ""
+    }
+
     private fun subscribeUi(adapter: BuscarAdapter) {
         viewModel.ciudadesFiltered.observe(viewLifecycleOwner) {
             ciudades -> adapter.updateData(ciudades)
@@ -96,14 +87,18 @@ class BuscarFragment : Fragment() {
                         Toast.makeText(context, "${it.name} añadido a favoritos", Toast.LENGTH_SHORT)
                             .show()
                     } else {
-                        Toast.makeText(context, "${it.name} eliminado de favoritos", Toast.LENGTH_SHORT)
+                        Toast.makeText(context, "${it.name} eliminado de favoritos", Toast.LENGTH_SHORT).show()
                     }
                 }
 
                 return@BuscarAdapter fav
             },
-            onCiudadClick = {
-                listener.onCiudadClick(it)
+            onCiudadClick = { ciudad ->
+                val intent = Intent(requireContext(), PronosticoActivity::class.java).apply {
+                    putExtra(PronosticoActivity.CIUDAD, ciudad)
+                }
+
+                startActivity(intent)
             },
             onFavoriteLoad = {
                 viewModel.checkFavorite(it)

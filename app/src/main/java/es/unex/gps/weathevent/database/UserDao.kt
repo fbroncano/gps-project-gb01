@@ -3,7 +3,7 @@ package es.unex.gps.weathevent.database
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
-import androidx.room.Transaction
+import androidx.room.Update
 import es.unex.gps.weathevent.model.User
 
 @Dao
@@ -20,7 +20,6 @@ interface UserDao {
     @Insert
     suspend fun insert(user: User): Long
 
-    @Query("UPDATE user SET name = :newName, username = :newUsername, email = :newEmail, password = :newPassword WHERE userId = :userId")
-    suspend fun updateUserData(userId: Long?, newName: String, newUsername: String, newEmail: String, newPassword: String)
-
+    @Update
+    suspend fun updateUser(user: User)
 }

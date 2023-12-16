@@ -9,16 +9,14 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.CreationExtras
 import es.unex.gps.weathevent.WeathApplication
 import es.unex.gps.weathevent.data.repositories.FavoritosRepository
-import es.unex.gps.weathevent.data.repositories.UserRepository
 import es.unex.gps.weathevent.model.Ciudad
-import es.unex.gps.weathevent.model.User
 import kotlinx.coroutines.launch
 
 class FavoritosViewModel(
     private val favoritosRepository: FavoritosRepository
 ): ViewModel() {
 
-    var favChange = MutableLiveData(0)
+    private var favChange = MutableLiveData(0)
 
     val favorites: LiveData<List<Ciudad>>
         get() = favChange.switchMap {

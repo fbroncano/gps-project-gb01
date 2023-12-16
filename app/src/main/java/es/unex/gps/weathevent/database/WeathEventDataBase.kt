@@ -9,7 +9,7 @@ import es.unex.gps.weathevent.model.User
 import es.unex.gps.weathevent.model.Event
 import es.unex.gps.weathevent.model.Favorito
 
-@Database(version = 6, entities = [User::class, Ciudad::class, Event::class, Favorito::class], exportSchema = false)
+@Database(version = 7, entities = [User::class, Ciudad::class, Event::class, Favorito::class], exportSchema = false)
 abstract class WeathEventDataBase : RoomDatabase() {
     abstract fun userDao(): UserDao
     abstract fun eventDao() : EventDao
@@ -31,10 +31,6 @@ abstract class WeathEventDataBase : RoomDatabase() {
                 }
             }
             return INSTANCE!!
-        }
-
-        fun destroyInstance() {
-            INSTANCE = null
         }
     }
 }

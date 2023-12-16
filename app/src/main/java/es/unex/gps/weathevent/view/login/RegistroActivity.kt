@@ -3,27 +3,24 @@ package es.unex.gps.weathevent.view.login
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import android.widget.Button
-import android.widget.EditText
 import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
-import es.unex.gps.weathevent.R
 import es.unex.gps.weathevent.WeathApplication
-import es.unex.gps.weathevent.database.WeathEventDataBase
 import es.unex.gps.weathevent.databinding.ActivityRegistroBinding
 import es.unex.gps.weathevent.model.User
-import es.unex.gps.weathevent.view.home.HomeActivity
-import kotlinx.coroutines.Dispatchers
+import es.unex.gps.weathevent.view.HomeActivity
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+
 
 class RegistroActivity : AppCompatActivity() {
 
-    private lateinit var db: WeathEventDataBase
     private val viewModel: RegistroViewModel by viewModels {
-        RegistroViewModel.provideFactory( (application as WeathApplication).appContainer.userRepository, this)
+        RegistroViewModel.provideFactory(
+            (application as WeathApplication).appContainer.userRepository,
+            (application as WeathApplication).appContainer,
+            this)
     }
 
     private lateinit var binding: ActivityRegistroBinding
@@ -50,7 +47,9 @@ class RegistroActivity : AppCompatActivity() {
 
                     val error = viewModel.register(user)
                     if (error == null) {
-                        HomeActivity.start(this@RegistroActivity, user)
+                        viewModel.setUser(user)
+                        val intent = Intent(this@RegistroActivity, HomeActivity::class.java)
+                        this@RegistroActivity.startActivity(intent)
                     } else {
                         changeError(binding.errorUserRegistro, error)
                     }

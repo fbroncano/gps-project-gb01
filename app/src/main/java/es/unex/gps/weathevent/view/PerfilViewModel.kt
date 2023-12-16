@@ -1,28 +1,29 @@
-package es.unex.gps.weathevent.view.events
+package es.unex.gps.weathevent.view
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.CreationExtras
 import es.unex.gps.weathevent.WeathApplication
-import es.unex.gps.weathevent.data.repositories.EventsRepository
-import es.unex.gps.weathevent.model.Event
+import es.unex.gps.weathevent.data.repositories.UserRepository
+import es.unex.gps.weathevent.model.User
 import kotlinx.coroutines.launch
 
-class ListEventViewModel(
-    private val eventsRepository: EventsRepository
-) : ViewModel() {
+class PerfilViewModel(
+    private val userRepository: UserRepository
+): ViewModel() {
 
-    val events = eventsRepository.events
+    val user = userRepository.user
 
-    fun deleteEvent(event: Event) {
+    fun updateUser(newUser: User) {
+        user.value = newUser
+
         viewModelScope.launch {
-            eventsRepository.deleteEvent(event)
+            userRepository.updateUser(newUser)
         }
     }
 
     companion object {
-
         val Factory: ViewModelProvider.Factory = object : ViewModelProvider.Factory {
             @Suppress("UNCHECKED_CAST")
             override fun <T : ViewModel> create(
@@ -32,8 +33,8 @@ class ListEventViewModel(
                 // Get the Application object from extras
                 val application = checkNotNull(extras[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY])
 
-                return ListEventViewModel(
-                    (application as WeathApplication).appContainer.eventsRepository
+                return PerfilViewModel(
+                    (application as WeathApplication).appContainer.userRepository
                 ) as T
             }
         }

@@ -1,39 +1,41 @@
 package es.unex.gps.weathevent.view.login
 
-import android.util.Log
-import android.view.View
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.CreationExtras
 import es.unex.gps.weathevent.WeathApplication
 import es.unex.gps.weathevent.data.repositories.UserRepository
 import es.unex.gps.weathevent.model.User
 import es.unex.gps.weathevent.util.AppContainer
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class IniciarSesionViewModel (
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
+    private val appContainer: AppContainer
 ): ViewModel() {
 
     var user: User? = null
 
+    fun setUser(): Boolean {
+        return if (user != null) {
+            appContainer.setUser(user!!)
+            true
+        } else {
+            false
+        }
+    }
+
     suspend fun login(username: String, password: String): String? {
-        if (!username.contains(" ") && !username.replace(" ", "").equals("")) {
+        return if (!username.contains(" ") && username.replace(" ", "") != "") {
             user = userRepository.checkUserSesion(username, password)
 
             if (user == null) {
-                return "El usuario no existe o la contraseña es incorrecta."
+                "El usuario no existe o la contraseña es incorrecta."
             } else {
-                return null
+                null
             }
 
         } else {
-            return "El usuario no puede contener espacios"
+            "El usuario no puede contener espacios"
         }
     }
 
@@ -48,7 +50,8 @@ class IniciarSesionViewModel (
                 val application = checkNotNull(extras[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY]) as WeathApplication
 
                 return IniciarSesionViewModel(
-                    application.appContainer.userRepository
+                    application.appContainer.userRepository,
+                    application.appContainer
                 ) as T
             }
         }

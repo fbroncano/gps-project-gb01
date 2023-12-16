@@ -5,21 +5,20 @@ import android.util.Patterns
 import androidx.lifecycle.AbstractSavedStateViewModelFactory
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.savedstate.SavedStateRegistryOwner
-import es.unex.gps.weathevent.WeathApplication
 import es.unex.gps.weathevent.data.repositories.UserRepository
 import es.unex.gps.weathevent.model.User
+import es.unex.gps.weathevent.util.AppContainer
 
 class RegistroViewModel(
-    val userRepository: UserRepository
+    private val userRepository: UserRepository,
+    private val appContainer: AppContainer
 ): ViewModel() {
 
     fun validateEmail(email: String): String? {
         return if (email.isEmpty()) {
             "El correo electrónico no puede estar vacío."
-        } else if (Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+        } else if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
             "El correo electrónico no es válido."
         } else {
             null
@@ -65,9 +64,14 @@ class RegistroViewModel(
         }
     }
 
+    fun setUser(user: User) {
+        appContainer.setUser(user)
+    }
+
     companion object {
         fun provideFactory(
             userRepository: UserRepository,
+            appContainer: AppContainer,
             owner: SavedStateRegistryOwner,
             defaultArgs: Bundle? = null,
         ): AbstractSavedStateViewModelFactory =
@@ -78,7 +82,7 @@ class RegistroViewModel(
                     modelClass: Class<T>,
                     handle: SavedStateHandle
                 ): T {
-                    return RegistroViewModel(userRepository) as T
+                    return RegistroViewModel(userRepository, appContainer) as T
                 }
             }
     }

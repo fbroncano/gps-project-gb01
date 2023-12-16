@@ -23,6 +23,6 @@ class AppContainer(context: Context?) {
     fun setUser(user: User) {
         favoritosRepository.setUser(user)
         eventsRepository.setUser(user)
-        pronosticoRepository.setUser(user)
+        userRepository.setUser(user)
     }
 }

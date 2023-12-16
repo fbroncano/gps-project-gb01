@@ -32,7 +32,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".view.home.HomeActivity" />
+        <activity android:name=".view.HomeActivity" />
         <activity android:name=".view.events.EventDetailsActivity" />
         <activity android:name=".view.login.RegistroActivity" />
         <activity android:name=".view.PerfilActivity" />

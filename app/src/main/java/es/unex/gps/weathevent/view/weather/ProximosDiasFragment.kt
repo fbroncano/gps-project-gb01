@@ -5,21 +5,11 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import es.unex.gps.weathevent.api.APIError
-import es.unex.gps.weathevent.api.APIHelpers
-import es.unex.gps.weathevent.api.getElTiempoService
-import es.unex.gps.weathevent.data.api.ProximosDiasArray
-import es.unex.gps.weathevent.data.api.ProximosDiasSingle
 import es.unex.gps.weathevent.databinding.FragmentProximosDiasBinding
-import es.unex.gps.weathevent.interfaces.CiudadParam
-import es.unex.gps.weathevent.model.Ciudad
-import es.unex.gps.weathevent.model.Fecha
-import es.unex.gps.weathevent.model.ProximosDiasTiempo
 import es.unex.gps.weathevent.view.PronosticoViewModel
 import kotlinx.coroutines.launch
 class ProximosDiasFragment : Fragment() {
@@ -42,7 +32,7 @@ class ProximosDiasFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         // Inflate the layout for this fragment
         _binding = FragmentProximosDiasBinding.inflate(inflater, container, false)
         return binding.root

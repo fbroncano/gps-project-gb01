@@ -36,23 +36,20 @@ class AddEventViewModel (
     suspend fun filterMunicipio(municipio: String): String? {
         ciudad.value = ciudadesRepository.getCiudad(municipio)
 
-        return if (ciudad.value != null) {
-            null
-        } else {
-            "Revise la ortografía del municipio\n"
-        }
+        return if (ciudad.value != null) null
+        else "Revise la ortografía del municipio\n"
     }
 
     fun insertEvent(name: String, fecha: Fecha): Boolean {
         return if (ciudad.value != null) {
-            var event = Event(null, name, ciudad.value!!.name, fecha, -1, ciudad.value!!.ciudadId)
+            val event = Event(null, name, ciudad.value!!.name, fecha, -1, ciudad.value!!.ciudadId)
+
             viewModelScope.launch {
                 eventsRepository.addEvent(event)
             }
+
             true
-        } else {
-            false
-        }
+        } else false
     }
 
     companion object {

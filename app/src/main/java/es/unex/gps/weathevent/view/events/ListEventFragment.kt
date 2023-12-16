@@ -1,21 +1,14 @@
 package es.unex.gps.weathevent.view.events
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.compose.runtime.snapshots.Snapshot.Companion.observe
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
-import es.unex.gps.weathevent.database.WeathEventDataBase
 import es.unex.gps.weathevent.databinding.FragmentListEventBinding
-import es.unex.gps.weathevent.interfaces.OnClickEventListener
-import es.unex.gps.weathevent.interfaces.UserParam
-import es.unex.gps.weathevent.model.Event
-import es.unex.gps.weathevent.view.weather.PronosticoActivity
 
 class ListEventFragment : Fragment() {
 
@@ -26,7 +19,7 @@ class ListEventFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = FragmentListEventBinding.inflate(inflater, container, false)
         return binding.root
     }
