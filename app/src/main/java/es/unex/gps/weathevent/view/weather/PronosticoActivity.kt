@@ -38,7 +38,7 @@ class PronosticoActivity : AppCompatActivity() {
 
         binding.pronosticoNavigation.setupWithNavController(navController)
         viewModel.setUiViews()
-        viewModel.ciudadBinding()
+        viewModel.ciudadBinding(this)
     }
 
     override fun onSupportNavigateUp(): Boolean {
