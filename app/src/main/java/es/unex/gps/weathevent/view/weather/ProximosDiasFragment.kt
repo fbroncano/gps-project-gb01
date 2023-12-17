@@ -10,7 +10,6 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import es.unex.gps.weathevent.databinding.FragmentProximosDiasBinding
-import es.unex.gps.weathevent.view.PronosticoViewModel
 import kotlinx.coroutines.launch
 class ProximosDiasFragment : Fragment() {
 

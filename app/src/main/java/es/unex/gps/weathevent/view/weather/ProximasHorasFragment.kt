@@ -12,8 +12,6 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import es.unex.gps.weathevent.databinding.FragmentProximasHorasBinding
-import es.unex.gps.weathevent.model.Ciudad
-import es.unex.gps.weathevent.view.PronosticoViewModel
 import kotlinx.coroutines.launch
 
 // Gestión de dias
@@ -24,22 +22,12 @@ class ProximasHorasFragment : Fragment() {
     private val binding get() = _binding!!
     private lateinit var adapter: ProximasHorasAdapter
 
-    private val viewModel: PronosticoViewModel by activityViewModels {PronosticoViewModel.Factory}
-
-    private var ciudad: Ciudad? = null
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
-
-    override fun onAttach(context: android.content.Context) {
-        super.onAttach(context)
-
-    }
+    private val viewModel: PronosticoViewModel by activityViewModels { PronosticoViewModel.Factory}
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         // Inflate the layout for this fragment
         _binding = FragmentProximasHorasBinding.inflate(inflater, container, false)
         return binding.root

@@ -1,4 +1,4 @@
-package es.unex.gps.weathevent.view
+package es.unex.gps.weathevent.view.weather
 
 import android.content.Context
 import android.os.Build
@@ -13,8 +13,6 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.CreationExtras
 import es.unex.gps.weathevent.R
 import es.unex.gps.weathevent.WeathApplication
-import es.unex.gps.weathevent.view.weather.ProximasHorasAdapter
-import es.unex.gps.weathevent.view.weather.ProximosDiasAdapter
 import es.unex.gps.weathevent.api.APIError
 import es.unex.gps.weathevent.api.APIHelpers
 import es.unex.gps.weathevent.data.api.ProximosDiasArray
@@ -42,12 +40,7 @@ class PronosticoViewModel(
     lateinit var binding : ActivityPronosticoBinding
 
     private val _tiempos = MutableLiveData<MutableList<TiempoPorHora>>()
-    val tiempos: LiveData<MutableList<TiempoPorHora>>
-        get() = _tiempos
-
     private val _dias = MutableLiveData<MutableList<ProximosDiasTiempo>>()
-    val dias: LiveData<MutableList<ProximosDiasTiempo>>
-        get() = _dias
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun setUiViews() {
@@ -68,9 +61,9 @@ class PronosticoViewModel(
     fun ciudadBinding(context: Context) {
 
         viewModelScope.launch {
-            val isFavorite = favoritosRepository.checkFavorite(ciudad.value!!.ciudadId)
+            val favorite = favoritosRepository.checkFavorite(ciudad.value!!.ciudadId)
 
-            if (!isFavorite) {
+            if (!favorite) {
                 binding.imageFav.setImageResource(R.drawable.baseline_favorite_border_40)
             } else {
                 binding.imageFav.setImageResource(R.drawable.baseline_favorite_40_red)
@@ -120,11 +113,11 @@ class PronosticoViewModel(
 
                 // Se añaden las horas restantes del día en curso
                 if (index != -1) {
-                    if ((index + 1) < horasHoy?.size!!) {
-                        for (i in (index + 1)..<horasHoy?.size!!) {
+                    if ((index + 1) < horasHoy.size) {
+                        for (i in (index + 1)..<horasHoy.size) {
                             _tiempos.value!!.add(
                                 TiempoPorHora(
-                                    horasHoy?.get(i)!! + ":00",
+                                    horasHoy[i] + ":00",
                                     APIHelpers.convertTempToPreferences(
                                         response.pronostico?.hoy?.temperatura?.get(
                                             i
@@ -144,13 +137,13 @@ class PronosticoViewModel(
 
                 Log.d(
                     "INDICES",
-                    index.toString() + " " + horasHoy?.size.toString() + " " + horasManana?.size.toString()
+                    index.toString() + " " + horasHoy.size.toString() + " " + horasManana?.size.toString()
                 )
                 for (i in 0..<horasManana?.size!!) {
                     //TODO: Comprobar insercion de values
                     _tiempos.value!!.add(
                         TiempoPorHora(
-                            horasManana?.get(i)!! + ":00",
+                            horasManana.get(i)!! + ":00",
                             APIHelpers.convertTempToPreferences(
                                 response.pronostico?.manana?.temperatura?.get(
                                     i
@@ -179,21 +172,21 @@ class PronosticoViewModel(
                     for (obj in response.proximosDias) {
                         if (obj is ProximosDiasArray) {
                             val dates = obj.attributes?.fecha?.split("-")
-                            val fecha = Fecha(dates?.get(2)?.toInt()!!, dates?.get(1)?.toInt()!!, dates?.get(0)?.toInt()!!, 0, 0)
+                            val fecha = Fecha(dates?.get(2)?.toInt()!!, dates[1].toInt(), dates[0].toInt(), 0, 0)
 
                             _dias.value!!.add(
                                 ProximosDiasTiempo(
                                     fecha.getFormatDay(),
                                     "${APIHelpers.convertTempToPreferences(obj.temperatura?.minima?.toLong()!!, context)}\n${APIHelpers.convertTempToPreferences(obj.temperatura?.maxima?.toLong()!!, context)}",
-                                    obj.estadoCieloDescripcion?.get(0)!!,
+                                    obj.estadoCieloDescripcion[0],
                                     "Sens. ter.: ${APIHelpers.convertTempToPreferences(obj.sensTermica?.minima?.toLong()!!, context)} - ${APIHelpers.convertTempToPreferences(obj.sensTermica?.maxima?.toLong()!!, context)}",
-                                    "Precipitacion: ${obj.probPrecipitacion?.get(0)!!}%",
-                                    "Viento: ${APIHelpers.convertVelToPreferences(obj.viento?.get(0)?.velocidad?.toLong()!!, context)} ${obj.viento?.get(0)?.direccion}"
+                                    "Precipitacion: ${obj.probPrecipitacion[0]}%",
+                                    "Viento: ${APIHelpers.convertVelToPreferences(obj.viento[0].velocidad?.toLong()!!, context)} ${obj.viento[0].direccion}"
                                 )
                             )
                         } else if (obj is ProximosDiasSingle) {
                             val dates = obj.attributes?.fecha?.split("-")
-                            val fecha = Fecha(dates?.get(2)?.toInt()!!, dates?.get(1)?.toInt()!!, dates?.get(0)?.toInt()!!, 0, 0)
+                            val fecha = Fecha(dates?.get(2)?.toInt()!!, dates[1].toInt(), dates[0].toInt(), 0, 0)
 
                             _dias.value!!.add(
                                 ProximosDiasTiempo(
