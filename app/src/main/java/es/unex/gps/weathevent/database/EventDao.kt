@@ -13,8 +13,6 @@ interface EventDao {
     @Query("SELECT * FROM event WHERE userid = :userid ORDER BY ano, mes, dia, hora, mins")
     fun searchByUser (userid: Long) : LiveData<List<Event>>
 
-    @Query("SELECT * FROM event")
-    suspend fun getAllEvents () : List<Event>
     @Insert
     suspend fun insertEvent (event: Event) : Long
 

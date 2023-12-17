@@ -18,10 +18,6 @@ class CiudadesRepository private constructor(
             fetchCiudades()
     }
 
-    suspend fun getCiudad(ciudadId: Long) : Ciudad {
-        return ciudadDao.getCiudad(ciudadId)
-    }
-
     suspend fun getCiudad(ciudadName: String): Ciudad {
         return ciudadDao.getCiudad(ciudadName)
     }
@@ -30,7 +26,7 @@ class CiudadesRepository private constructor(
         try {
             // Se obtienen todas las provincias de España
             val provinciasResponse = networkService.getProvincias()
-            var municipios = arrayListOf<Municipio>()
+            val municipios = arrayListOf<Municipio>()
 
             // Se obtienen todos los municipios de las provincias de España
             for (provincia in provinciasResponse.provincias) {

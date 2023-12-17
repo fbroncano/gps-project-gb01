@@ -9,9 +9,3 @@ data class Ciudad (
     @PrimaryKey val ciudadId: Long,
     val name: String = "",
 ): Serializable
-
-data class CiudadFavorite (
-    val isFavorite: Long,
-    val ciudadId: Long,
-    val name: String
-)

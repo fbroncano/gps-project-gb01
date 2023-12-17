@@ -1,9 +1,7 @@
 package es.unex.gps.weathevent.api
 
-import es.unex.gps.weathevent.data.api.HomeResponse
 import es.unex.gps.weathevent.data.api.MunicipioResponse
 import es.unex.gps.weathevent.data.api.MunicipiosResponse
-import es.unex.gps.weathevent.data.api.ProvinciaResponse
 import es.unex.gps.weathevent.data.api.ProvinciasResponse
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -31,16 +29,9 @@ private val service : ElTiempoAPI by lazy {
 fun getElTiempoService() = service
 
 interface ElTiempoAPI {
-    @GET("home")
-    suspend fun getHome() : HomeResponse
 
     @GET("provincias")
     suspend fun getProvincias() : ProvinciasResponse
-
-    @GET("provincias/{codprov}")
-    suspend fun getProvincia(
-        @Path("codprov") codprov : String
-    ) : ProvinciaResponse
 
     @GET("provincias/{codprov}/municipios")
     suspend fun getMunicipios(
