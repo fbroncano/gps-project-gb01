@@ -65,7 +65,7 @@ class PronosticoViewModel(
         }
     }
 
-    fun ciudadBinding() {
+    fun ciudadBinding(context: Context) {
 
         viewModelScope.launch {
             val isFavorite = favoritosRepository.checkFavorite(ciudad.value!!.ciudadId)
@@ -83,20 +83,19 @@ class PronosticoViewModel(
                     if (!isFavorite) {
                         favoritosRepository.markFavorite(ciudad.value!!.ciudadId)
                         binding.imageFav.setImageResource(R.drawable.baseline_favorite_40_red)
-                        /*Toast.makeText(
-                            this,
-                            "${ciudad?.name} añadido a favoritos",
+                        Toast.makeText(
+                            context,
+                            "${ciudad.value?.name} añadido a favoritos",
                             Toast.LENGTH_SHORT
-                        ).show()*/
+                        ).show()
                     } else {
                         favoritosRepository.desmarkFavorite(ciudad.value!!.ciudadId)
                         binding.imageFav.setImageResource(R.drawable.baseline_favorite_border_40)
-                        /*
-                        Toast.makeText(
-                            this@PronosticoViewModel!!,
-                            "${ciudad?.name} eliminado de favoritos",
+
+                        Toast.makeText(context,
+                            "${ciudad.value?.name} eliminado de favoritos",
                             Toast.LENGTH_SHORT
-                        ).show()*/
+                        ).show()
                     }
                 }
             }
@@ -105,55 +104,70 @@ class PronosticoViewModel(
 
     @RequiresApi(Build.VERSION_CODES.O)
     suspend fun getProximasHoras(context: Context, adapter: ProximasHorasAdapter){
-                try {
-                    Log.d("","${ciudad.value?.name}")
-                    val response = pronosticoRepository.getMunicipioResponse(ciudad.value!!.ciudadId)
+        if(_tiempos.value!!.isEmpty()) {
+            try {
+                Log.d("", "${ciudad.value?.name}")
+                val response = pronosticoRepository.getMunicipioResponse(ciudad.value!!.ciudadId)
 
-                    val horasHoy = response.pronostico?.hoy?.viento?.map {
-                        it.attributes?.periodo
-                    }
+                val horasHoy = response.pronostico?.hoy?.viento?.map {
+                    it.attributes?.periodo
+                }
 
-                    var hour = LocalDateTime.now().hour.toString()
-                    if (hour.length == 1) hour = "0$hour"
+                var hour = LocalDateTime.now().hour.toString()
+                if (hour.length == 1) hour = "0$hour"
 
-                    val index = horasHoy?.indexOf(hour)!!
+                val index = horasHoy?.indexOf(hour)!!
 
-                    // Se añaden las horas restantes del día en curso
-                    if (index != -1) {
-                        if ((index + 1) < horasHoy?.size!!) {
-                            for (i in (index + 1)..< horasHoy?.size!!) {
-                                _tiempos.value!!.add(
-                                    TiempoPorHora(
-                                        horasHoy?.get(i)!! + ":00",
-                                        APIHelpers.convertTempToPreferences(response.pronostico?.hoy?.temperatura?.get(i)!!.toLong(), context),
-                                        response.pronostico?.hoy?.estadoCieloDescripcion?.get(i)!!
-                                    )
+                // Se añaden las horas restantes del día en curso
+                if (index != -1) {
+                    if ((index + 1) < horasHoy?.size!!) {
+                        for (i in (index + 1)..<horasHoy?.size!!) {
+                            _tiempos.value!!.add(
+                                TiempoPorHora(
+                                    horasHoy?.get(i)!! + ":00",
+                                    APIHelpers.convertTempToPreferences(
+                                        response.pronostico?.hoy?.temperatura?.get(
+                                            i
+                                        )!!.toLong(), context
+                                    ),
+                                    response.pronostico?.hoy?.estadoCieloDescripcion?.get(i)!!
                                 )
-                            }
+                            )
                         }
                     }
-
-                    // Se añaden las horas del día siguiente
-                    val horasManana = response.pronostico?.manana?.viento?.map {
-                        it.attributes?.periodo
-                    }
-
-                    Log.d("INDICES", index.toString() + " " + horasHoy?.size.toString() + " " + horasManana?.size.toString())
-                    for (i in 0..< horasManana?.size!!) {
-                        //TODO: Comprobar insercion de values
-                        _tiempos.value!!.add(
-                            TiempoPorHora(
-                                horasManana?.get(i)!! + ":00",
-                                APIHelpers.convertTempToPreferences(response.pronostico?.manana?.temperatura?.get(i)!!.toLong(),context),
-                                response.pronostico?.manana?.estadoCieloDescripcion?.get(i)!!
-                            )
-                        )
-                    }
-
-                    adapter.updateData(_tiempos.value!!)
-                } catch (error: APIError) {
-                    //Toast.makeText(context, error.message, Toast.LENGTH_SHORT).show()
                 }
+
+                // Se añaden las horas del día siguiente
+                val horasManana = response.pronostico?.manana?.viento?.map {
+                    it.attributes?.periodo
+                }
+
+                Log.d(
+                    "INDICES",
+                    index.toString() + " " + horasHoy?.size.toString() + " " + horasManana?.size.toString()
+                )
+                for (i in 0..<horasManana?.size!!) {
+                    //TODO: Comprobar insercion de values
+                    _tiempos.value!!.add(
+                        TiempoPorHora(
+                            horasManana?.get(i)!! + ":00",
+                            APIHelpers.convertTempToPreferences(
+                                response.pronostico?.manana?.temperatura?.get(
+                                    i
+                                )!!.toLong(), context
+                            ),
+                            response.pronostico?.manana?.estadoCieloDescripcion?.get(i)!!
+                        )
+                    )
+                }
+
+                adapter.updateData(_tiempos.value!!)
+            } catch (error: APIError) {
+                Toast.makeText(context, error.message, Toast.LENGTH_SHORT).show()
+            }
+        }else{
+            adapter.updateData(_tiempos.value!!)
+        }
     }
 
     suspend fun getProximosDias(context: Context, adapter: ProximosDiasAdapter){
@@ -194,11 +208,13 @@ class PronosticoViewModel(
                         }
                     }
 
-
+                    Log.d("","hola ${_dias.value?.isEmpty()}")
                     adapter.updateData(_dias.value!!)
                 } catch (error: APIError) {
                     Toast.makeText(context, error.message, Toast.LENGTH_SHORT).show()
                 }
+            } else{
+                adapter.updateData(_dias.value!!)
             }
 
     }

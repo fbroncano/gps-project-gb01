@@ -15,7 +15,6 @@ abstract class WeathEventDataBase : RoomDatabase() {
     abstract fun eventDao() : EventDao
     abstract fun ciudadDao() : CiudadDao
     abstract fun favoritoDao() : FavoritoDao
-
     companion object {
         private var INSTANCE: WeathEventDataBase? = null
 

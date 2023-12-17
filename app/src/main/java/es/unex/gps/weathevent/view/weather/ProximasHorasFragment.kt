@@ -54,15 +54,9 @@ class ProximasHorasFragment : Fragment() {
         lifecycleScope.launch {
             viewModel.getProximasHoras(requireContext(), adapter)
         }
-        //subscribeUi(adapter)
+
     }
 
-
-    private fun subscribeUi(adapter: ProximasHorasAdapter) {
-        viewModel.tiempos.observe(viewLifecycleOwner) {
-                tiempos -> adapter.updateData(tiempos)
-        }
-    }
     private fun setUpRecyclerView() {
         adapter = ProximasHorasAdapter(
             tiempos = emptyList()
