@@ -21,11 +21,6 @@
         android:name="es.unex.gps.weathevent.view.events.ListEventFragment"
         android:label="@string/fragment_list_event"
         tools:layout="@layout/fragment_list_event" />
-    <fragment
-        android:id="@+id/inicioFragment"
-        android:name="es.unex.gps.weathevent.view.InicioFragment"
-        android:label="@string/home_option"
-        tools:layout="@layout/fragment_inicio" />
 
     <fragment
         android:id="@+id/settingsFragment"

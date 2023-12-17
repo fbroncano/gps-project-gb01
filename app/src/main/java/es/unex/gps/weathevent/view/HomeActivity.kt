@@ -39,8 +39,7 @@ class HomeActivity : AppCompatActivity() {
             setOf(
                 R.id.listEventFragment,
                 R.id.buscarFragment,
-                R.id.favoritosFragment,
-                R.id.inicioFragment
+                R.id.favoritosFragment
             )
         )
         setSupportActionBar(binding.toolbar)

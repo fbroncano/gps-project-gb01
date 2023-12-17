@@ -10,7 +10,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.google.gson.Gson
 import es.unex.gps.weathevent.api.APIHelpers
-import es.unex.gps.weathevent.data.api.ProximosDias
 import es.unex.gps.weathevent.data.api.ProximosDiasArray
 import es.unex.gps.weathevent.data.api.ProximosDiasSingle
 import es.unex.gps.weathevent.databinding.ActivityEventDetailsBinding
@@ -51,8 +50,8 @@ class EventDetailsActivity : AppCompatActivity() {
 
     private fun updateUI(event: Event) {
         binding.ubicationText.text = event.location
-        binding.dateView.text = event.date?.getFormatDay()
-        binding.eventDataView.text = "${event.date?.getFormatHour()} - ${event.name}"
+        binding.dateView.text = event.date.getFormatDay()
+        binding.eventDataView.text = "${event.date.getFormatHour()} - ${event.name}"
 
         if (viewModel.pronostico && viewModel.proximoDia is ProximosDiasSingle) {
             setPronostico(viewModel.proximoDia as ProximosDiasSingle)
@@ -79,7 +78,7 @@ class EventDetailsActivity : AppCompatActivity() {
         binding.precipitacionValueView.text = "${proximoDia.probPrecipitacion[0]}%"
         binding.sendtermValueView.text = "${APIHelpers.convertTempToPreferences(proximoDia.sensTermica?.minima?.toLong()!!, this)} - ${APIHelpers.convertTempToPreferences(proximoDia.sensTermica?.maxima?.toLong()!!, this)}"
         binding.estadoValueView.text = proximoDia.estadoCieloDescripcion[0]
-        binding.vientoValueView.text = "${APIHelpers.convertVelToPreferences(proximoDia.viento[0]?.velocidad?.toLong()!!, this)}km/h ${proximoDia.viento[0]?.direccion}"
+        binding.vientoValueView.text = "${APIHelpers.convertVelToPreferences(proximoDia.viento[0].velocidad?.toLong()!!, this)}km/h ${proximoDia.viento[0].direccion}"
         binding.indiceuvValueView.text = "${proximoDia.uvMax}"
         binding.humedadValueView.text = "${proximoDia.humedadRelativa?.minima}%"
     }
@@ -101,6 +100,6 @@ class EventDetailsActivity : AppCompatActivity() {
     }
 
     companion object {
-        val EVENT = "Event"
+        const val EVENT = "Event"
     }
 }

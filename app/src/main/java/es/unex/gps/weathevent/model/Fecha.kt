@@ -18,8 +18,8 @@ data class Fecha (
     }
 
     fun getFormatHour() : String {
-        val mins_string = if (mins < 10) "0$mins" else mins
-        return "$hora:$mins_string"
+        val minsString = if (mins < 10) "0$mins" else mins
+        return "$hora:$minsString"
     }
 
     fun isValid() : Boolean {

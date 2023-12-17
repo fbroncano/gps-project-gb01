@@ -19,7 +19,7 @@ class PronosticoActivity : AppCompatActivity() {
     private lateinit var binding : ActivityPronosticoBinding
     private lateinit var appBarConfiguration: AppBarConfiguration
 
-    private val viewModel: PronosticoViewModel by viewModels{ PronosticoViewModel.Factory}
+    private val viewModel: PronosticoViewModel by viewModels{ PronosticoViewModel.Factory }
 
     private val navController by lazy {
         (supportFragmentManager.findFragmentById(R.id.pronostico_nav_host_fragment) as NavHostFragment).navController
