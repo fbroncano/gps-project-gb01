@@ -65,14 +65,11 @@ class RegistroActivity : AppCompatActivity() {
     }
 
     private suspend fun registrar(user: User){
+        val context = this
         withContext(Dispatchers.IO) {
-            db.userDao().insert(user)
+            val id = db.userDao().insert(user)
+            MainActivity.start(context, User(id, user.name, user.username, user.email, user.password))
         }
-
-        val intent = Intent(this, MainActivity::class.java).apply {
-            putExtra(MainActivity.USER_INFO, user)
-        }
-        startActivity(intent)
     }
 
     private fun todoValido(): Boolean{
