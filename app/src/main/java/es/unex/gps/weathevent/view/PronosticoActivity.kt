@@ -11,7 +11,12 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupWithNavController
+<<<<<<< HEAD:app/src/main/java/es/unex/gps/weathevent/PronosticoActivity.kt
+import es.unex.gps.weathevent.Model.Ciudad
+import es.unex.gps.weathevent.Model.User
+=======
 import es.unex.gps.weathevent.R
+>>>>>>> origin/develop:app/src/main/java/es/unex/gps/weathevent/view/PronosticoActivity.kt
 import es.unex.gps.weathevent.api.APIHelpers
 import es.unex.gps.weathevent.api.getElTiempoService
 import es.unex.gps.weathevent.database.WeathEventDataBase
