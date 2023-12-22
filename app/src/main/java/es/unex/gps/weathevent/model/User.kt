@@ -1,4 +1,4 @@
-package es.unex.gps.weathevent.model
+package es.unex.gps.weathevent.Model
 
 
 

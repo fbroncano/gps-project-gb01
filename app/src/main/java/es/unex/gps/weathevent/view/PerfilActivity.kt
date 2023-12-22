@@ -17,21 +17,7 @@ class PerfilActivity : AppCompatActivity() {
     private lateinit var db: WeathEventDataBase
     private lateinit var user: User
     private lateinit var binding : ActivityPerfilBinding
-    private var editando = false
 
-    companion object {
-        const val USER_INFO = "USER_INFO"
-        fun start(
-            context: Context,
-            user: User,
-        ) {
-            val intent = Intent(context, PerfilActivity::class.java).apply {
-                putExtra(USER_INFO, user)
-            }
-            context.startActivity(intent)
-        }
-
-    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityPerfilBinding.inflate(layoutInflater)
