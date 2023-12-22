@@ -11,10 +11,13 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import es.unex.gps.weathevent.adapter.BuscarAdapter
 import es.unex.gps.weathevent.api.APIError
 import es.unex.gps.weathevent.api.APIHelpers
 import es.unex.gps.weathevent.database.WeathEventDataBase
 import es.unex.gps.weathevent.databinding.FragmentBuscarBinding
+import es.unex.gps.weathevent.interfaces.OnCiudadClickListener
+import es.unex.gps.weathevent.interfaces.UserParam
 import es.unex.gps.weathevent.model.Ciudad
 import es.unex.gps.weathevent.model.User
 import kotlinx.coroutines.launch
@@ -39,14 +42,10 @@ class BuscarFragment : Fragment() {
     private val binding get() = _binding!!
     private lateinit var adapter: BuscarAdapter
 
-    private lateinit var userParam: ListEventFragment.UserParamFragment
+    private lateinit var userParam: UserParam
     private lateinit var user: User
 
     private lateinit var listener: OnCiudadClickListener
-    interface OnCiudadClickListener {
-        fun onCiudadClick(ciudad: Ciudad)
-    }
-
 
     override fun onAttach(context: android.content.Context) {
         super.onAttach(context)
@@ -59,7 +58,7 @@ class BuscarFragment : Fragment() {
             throw RuntimeException(context.toString() + " must implement OnCiudadClickListener")
         }
 
-        if (context is ListEventFragment.UserParamFragment) {
+        if (context is UserParam) {
             userParam = context
         } else {
             throw RuntimeException(context.toString() + " must implement OnEventClickListener")
