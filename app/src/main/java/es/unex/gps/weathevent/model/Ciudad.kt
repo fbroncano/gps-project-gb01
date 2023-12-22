@@ -1,4 +1,4 @@
-package es.unex.gps.weathevent.Model
+package es.unex.gps.weathevent.model
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity

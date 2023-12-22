@@ -9,12 +9,32 @@ import es.unex.gps.weathevent.model.User
 import es.unex.gps.weathevent.model.UserCiudadCrossRef
 import es.unex.gps.weathevent.model.Event
 
-<<<<<<< HEAD
-
-
-=======
 @Database(version = 5, entities = [User::class, Ciudad::class, Event::class, UserCiudadCrossRef::class], exportSchema = false)
->>>>>>> origin/develop
-abstract class WeathEventDataBase : RoomDatabase() {
 
+abstract class WeathEventDataBase : RoomDatabase() {
+    abstract fun userDao(): UserDao
+    abstract fun eventDao() : EventDao
+    abstract fun ciudadDao() : CiudadDao
+
+    companion object {
+        private var INSTANCE: WeathEventDataBase? = null
+
+        fun getInstance(context: Context): WeathEventDataBase {
+            if (INSTANCE == null) {
+                synchronized(WeathEventDataBase::class) {
+                    INSTANCE = Room.databaseBuilder(
+                        context.applicationContext,
+                        WeathEventDataBase::class.java,
+                        "WeathEventDataBase.db" // Nombre de la base de datos
+                    ).fallbackToDestructiveMigration()
+                        .build()
+                }
+            }
+            return INSTANCE!!
+        }
+
+        fun destroyInstance() {
+            INSTANCE = null
+        }
+    }
 }
