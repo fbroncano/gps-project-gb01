@@ -1,4 +1,4 @@
-package es.unex.gps.weathevent.model
+package es.unex.gps.weathevent.Model
 
 
 
@@ -6,6 +6,9 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import java.io.Serializable
 
+/*
+ * Modelo de clase usuario
+ */
 @Entity
 data class User(
     @PrimaryKey(autoGenerate = true) val userId: Long?,
