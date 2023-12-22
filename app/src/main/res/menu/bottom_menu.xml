@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/listEventFragment"
+        android:enabled="true"
+        android:icon="@drawable/baseline_calendar_month_24"
+        android:title="@string/events_option"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/buscarFragment"
+        android:enabled="true"
+        android:icon="@drawable/baseline_search__black24"
+        android:title="@string/search_option"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/favoritosFragment"
+        android:enabled="true"
+        android:icon="@drawable/baseline_favorite_24"
+        android:title="@string/favourite_option"
+        app:showAsAction="ifRoom" />
+</menu>
