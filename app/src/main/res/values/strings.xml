@@ -1,3 +1,40 @@
 <resources>
     <string name="app_name">WeathEvent</string>
+    <string name="exportar_evento">Exportar evento</string>
+    <string name="ndice_uv">Índice UV</string>
+    <string name="humedad_relativa">Humedad relativa</string>
+    <string name="precipitacion">Precipitación</string>
+    <string name="sens_termica">Sensación térmica</string>
+    <string name="estado_del_cielo">Estado del cielo</string>
+    <string name="viento">Viento</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="calendar_option">Calendario</string>
+    <string name="search_option">Búsqueda</string>
+    <string name="home_option">Inicio</string>
+    <string name="favourite_option">Favoritos</string>
+    <string name="action_search">search</string>
+    <string name="action_settings">Ajustes</string>
+    <string name="delete_event">Borrar evento</string>
+    <string name="events_option">Eventos</string>
+    <string name="fragment_list_event">Eventos</string>
+    <string name="lista_de_eventos">Lista de eventos</string>
+    <string name="title_activity_add_event">AddEventActivity</string>
+    <string name="horas_option">Próximas horas</string>
+    <string name="dias_option">Próximos días</string>
+    <!-- Preference Titles -->
+    <string name="messages_header">Messages</string>
+    <string name="sync_header">Sync</string>
+
+    <!-- Messages Preferences -->
+    <string name="signature_title">Your signature</string>
+    <string name="reply_title">Default reply action</string>
+
+    <!-- Sync Preferences -->
+    <string name="sync_title">Sync email periodically</string>
+    <string name="attachment_title">Download incoming attachments</string>
+    <string name="attachment_summary_on">Automatically download attachments for incoming emails
+    </string>
+    <string name="attachment_summary_off">Only download attachments when manually requested</string>
+    <string name="perfil">Perfil</string>
+    <string name="settings">Ajustes</string>
 </resources>
