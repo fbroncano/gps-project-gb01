@@ -1,6 +1,6 @@
 package es.unex.gps.weathevent
 
-import es.unex.gps.weathevent.Model.User
+import es.unex.gps.weathevent.model.User
 import junit.framework.TestCase.assertTrue
 import junit.framework.TestCase.assertEquals
 import org.junit.Test
