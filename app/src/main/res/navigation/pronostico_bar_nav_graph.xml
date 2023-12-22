@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/pronostico_bar_nav_graph"
+    app:startDestination="@id/proximasHorasFragment">
+
+    <fragment
+        android:id="@+id/proximasHorasFragment"
+        android:name="es.unex.gps.weathevent.view.ProximasHorasFragment"
+        android:label="fragment_proximas_horas"
+        tools:layout="@layout/fragment_proximas_horas" />
+
+
+    <fragment
+        android:id="@+id/proximosDiasFragment"
+        android:name="es.unex.gps.weathevent.view.ProximosDiasFragment"
+        android:label="fragment_proximos_dias"
+        tools:layout="@layout/fragment_proximos_dias" />
+</navigation>
