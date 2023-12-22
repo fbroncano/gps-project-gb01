@@ -658,6 +658,215 @@ class EventosTest {
         linearLayout.check(matches(isDisplayed()))
     }
 
+    @Test
+    fun exportarEventoTest(){
+        val materialButton = onView(
+            withId(R.id.registro)
+        )
+        materialButton.perform(click())
+
+        val appCompatEditText = onView(
+            withId(R.id.nombreRegistro)
+        )
+        appCompatEditText.perform(replaceText("test exp ev"), closeSoftKeyboard())
+
+        val appCompatEditText2 = onView(
+            withId(R.id.usernameRegistro)
+        )
+        appCompatEditText2.perform(replaceText("testExpEvento"), closeSoftKeyboard())
+
+        val appCompatEditText3 = onView(
+            withId(R.id.emailRegistro)
+        )
+        appCompatEditText3.perform(replaceText("test@test.es"), closeSoftKeyboard())
+
+        val appCompatEditText4 = onView(
+            withId(R.id.passRegistro)
+        )
+        appCompatEditText4.perform(replaceText("test123"), closeSoftKeyboard())
+
+        val materialButton7 = onView(
+            withId(R.id.confirmarRegistro)
+        )
+        materialButton7.perform(click())
+
+        val frameLayout = onView(
+            withId(R.id.bottom_navigation)
+        )
+        frameLayout.check(matches(isDisplayed()))
+        val bottomNavigationItemView = onView(
+            allOf(
+                withId(R.id.listEventFragment), withContentDescription("Eventos"),
+                childAtPosition(
+                    childAtPosition(
+                        withId(R.id.bottom_navigation),
+                        0
+                    ),
+                    0
+                ),
+                isDisplayed()
+            )
+        )
+        bottomNavigationItemView.perform(click())
+
+        val floatingActionButton = onView(
+            allOf(
+                withId(R.id.add_event_button), withContentDescription("Añadir evento"),
+                childAtPosition(
+                    allOf(
+                        withId(R.id.listEventFragment),
+                        childAtPosition(
+                            withId(R.id.nav_host_fragment),
+                            0
+                        )
+                    ),
+                    1
+                ),
+                isDisplayed()
+            )
+        )
+        floatingActionButton.perform(click())
+
+        val textInputEditText = onView(
+            allOf(
+                childAtPosition(
+                    childAtPosition(
+                        withId(R.id.event_name_view),
+                        0
+                    ),
+                    0
+                ),
+                isDisplayed()
+            )
+        )
+        textInputEditText.perform(replaceText("Exportar evento test"), closeSoftKeyboard())
+
+        val textInputEditText2 = onView(
+            allOf(
+                childAtPosition(
+                    childAtPosition(
+                        withId(R.id.location_view),
+                        0
+                    ),
+                    0
+                ),
+                isDisplayed()
+            )
+        )
+        textInputEditText2.perform(replaceText("La Coronada"), closeSoftKeyboard())
+
+        val materialButton2 = onView(
+            allOf(
+                withId(R.id.date_picker_btn), withText("Seleccionar fecha"),
+                childAtPosition(
+                    childAtPosition(
+                        withId(android.R.id.content),
+                        0
+                    ),
+                    4
+                ),
+                isDisplayed()
+            )
+        )
+        materialButton2.perform(click())
+
+        val materialButton3 = onView(
+            allOf(
+                withId(android.R.id.button1), withText("OK"),
+                childAtPosition(
+                    childAtPosition(
+                        withClassName(`is`("android.widget.ScrollView")),
+                        0
+                    ),
+                    3
+                )
+            )
+        )
+        materialButton3.perform(scrollTo(), click())
+
+        val materialButton4 = onView(
+            allOf(
+                withId(R.id.hour_picker_btn), withText("Seleccionar hora"),
+                childAtPosition(
+                    childAtPosition(
+                        withId(android.R.id.content),
+                        0
+                    ),
+                    6
+                ),
+                isDisplayed()
+            )
+        )
+        materialButton4.perform(click())
+
+        val materialButton5 = onView(
+            allOf(
+                withId(android.R.id.button1), withText("OK"),
+                childAtPosition(
+                    childAtPosition(
+                        withClassName(`is`("android.widget.ScrollView")),
+                        0
+                    ),
+                    3
+                )
+            )
+        )
+        materialButton5.perform(scrollTo(), click())
+
+        Thread.sleep(15000)
+
+        val materialButton6 = onView(
+            allOf(
+                withId(R.id.save_event_btn), withText("Guardar"),
+                childAtPosition(
+                    childAtPosition(
+                        withId(android.R.id.content),
+                        0
+                    ),
+                    8
+                ),
+                isDisplayed()
+            )
+        )
+        materialButton6.perform(click())
+
+        val cardView = onView(
+            allOf(
+                withId(R.id.cv_event),
+                childAtPosition(
+                    childAtPosition(
+                        withId(R.id.rv_list_events),
+                        0
+                    ),
+                    0
+                ),
+                isDisplayed()
+            )
+        )
+        cardView.perform(click())
+
+        Thread.sleep(2000)
+
+        val textView = onView(
+            allOf(
+                withId(R.id.ubication_text), withText("La Coronada"),
+                withParent(withParent(withId(android.R.id.content))),
+                isDisplayed()
+            )
+        )
+        textView.check(matches(withText("La Coronada")))
+
+        val button = onView(
+            allOf(
+                withId(R.id.export_button), withText("Exportar evento"),
+                withParent(withParent(withId(android.R.id.content))),
+                isDisplayed()
+            )
+        )
+        button.check(matches(isDisplayed()))
+
+    }
+
     private fun childAtPosition(
         parentMatcher: Matcher<View>, position: Int
     ): Matcher<View> {
