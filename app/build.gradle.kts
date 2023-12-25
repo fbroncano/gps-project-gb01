@@ -97,3 +97,15 @@ dependencies {
     // optional - Test helpers
     testImplementation("androidx.room:room-testing:$room_version")
 }
+
+plugins {
+  id "org.sonarqube" version "4.4.1.3373"
+}
+
+sonar {
+  properties {
+    property "sonar.projectKey", "fbroncano_gps-project-gb01"
+    property "sonar.organization", "fbroncano"
+    property "sonar.host.url", "https://sonarcloud.io"
+  }
+}
