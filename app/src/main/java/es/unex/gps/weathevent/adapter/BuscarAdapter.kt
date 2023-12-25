@@ -3,14 +3,11 @@ package es.unex.gps.weathevent.adapter
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import es.unex.gps.weathevent.R
 import es.unex.gps.weathevent.database.WeathEventDataBase
 import es.unex.gps.weathevent.databinding.SearchItemListBinding
 import es.unex.gps.weathevent.model.Ciudad
-import es.unex.gps.weathevent.model.User
-import kotlinx.coroutines.launch
 
 class BuscarAdapter (
     private var ciudades: List<Ciudad>,

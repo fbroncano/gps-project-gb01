@@ -44,13 +44,13 @@ class APIHelpers {
             val preferences = PreferenceManager.getDefaultSharedPreferences(context).all
             val grados = preferences["Grados"] as String? ?: "Celsius"
 
-            if (grados == "Fahrenheit") {
+            return if (grados == "Fahrenheit") {
                 val result = temperature.toFloat() * 1.8 + 32.0
                 Log.d("ConvertTemperature", "${(result.toInt())}º F")
-                return "${(result.toInt())}º F"
+                "${(result.toInt())}º F"
             } else {
                 Log.d("ConvertTemperature", "${temperature}º C")
-                return "${temperature}º C"
+                "${temperature}º C"
             }
         }
 
@@ -58,13 +58,13 @@ class APIHelpers {
             val preferences = PreferenceManager.getDefaultSharedPreferences(context).all
             val grados = preferences["Velocidad"] as String? ?: "Km/h"
 
-            if (grados == "MPH") {
+            return if (grados == "MPH") {
                 val result = velocidad.toFloat() / 1.609
                 Log.d("ConvertVelocidad", "${(result.toInt())}MPH")
-                return "${(result.toInt())}MPH"
+                "${(result.toInt())}MPH"
             } else {
                 Log.d("ConvertVelocidad", "${velocidad}km/h")
-                return "${velocidad}km/h"
+                "${velocidad}km/h"
             }
         }
     }
